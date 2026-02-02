@@ -160,8 +160,11 @@ function populateCategories(type = null) {
     const editCategorySelect = document.getElementById('edit-category');
     
     const typeValue = type || document.getElementById('type').value;
-    const categoryList = typeValue === 'income' ? categories.income : 
-                        typeValue === 'expense' ? categories.expense : [];
+    let categoryList = [];
+    if (typeValue === 'income') categoryList = categories.income;
+    else if (typeValue === 'expense') categoryList = categories.expense;
+    else if (typeValue === 'investment') categoryList = investmentCategories;
+    else if (typeValue === 'caixinha') categoryList = investmentCategories;
 
     // Clear and populate category select
     categorySelect.innerHTML = '<option value="">Selecione uma categoria...</option>';
@@ -179,7 +182,7 @@ function populateCategories(type = null) {
 // ===== POPULATE FILTER CATEGORIES =====
 function populateFilterCategories() {
     const filterCategorySelect = document.getElementById('filter-category');
-    const allCategories = [...categories.income, ...categories.expense];
+    const allCategories = [...categories.income, ...categories.expense, ...investmentCategories];
     const uniqueCategories = [...new Set(allCategories)];
 
     filterCategorySelect.innerHTML = '<option value="all">Todas</option>';
@@ -285,7 +288,8 @@ function editTransaction(id) {
     
     // Populate edit form categories
     const editCategorySelect = document.getElementById('edit-category');
-    const categoryList = transaction.type === 'income' ? categories.income : categories.expense;
+    const getCategoryList = (type) => type === 'income' ? categories.income : type === 'investment' || type === 'caixinha' ? investmentCategories : categories.expense;
+    const categoryList = getCategoryList(transaction.type);
     editCategorySelect.innerHTML = '';
     categoryList.forEach(cat => {
         const option = document.createElement('option');
@@ -304,9 +308,9 @@ function editTransaction(id) {
 
     // Update categories when type changes
     document.getElementById('edit-type').addEventListener('change', function() {
-        const categoryList = this.value === 'income' ? categories.income : categories.expense;
+        const list = getCategoryList(this.value);
         editCategorySelect.innerHTML = '';
-        categoryList.forEach(cat => {
+        list.forEach(cat => {
             const option = document.createElement('option');
             option.value = cat;
             option.textContent = cat;
@@ -335,22 +339,35 @@ function updateSummary() {
         .filter(t => t.type === 'expense')
         .reduce((sum, t) => sum + t.amount, 0);
 
-    const investment = transactions
+    // Total investido: gastos em categorias de investimento + transações tipo investimento (não altera gastos/saldo)
+    const investmentFromExpense = transactions
         .filter(t => t.type === 'expense' && investmentCategories.includes(t.category))
         .reduce((sum, t) => sum + t.amount, 0);
+    const investmentFromType = transactions
+        .filter(t => t.type === 'investment')
+        .reduce((sum, t) => sum + t.amount, 0);
+    const investment = investmentFromExpense + investmentFromType;
 
+    // Total Caixinha: só transações tipo Caixinha (reduz o saldo, não altera gastos)
+    const caixinhaTotal = transactions
+        .filter(t => t.type === 'caixinha')
+        .reduce((sum, t) => sum + t.amount, 0);
+
+    // Saldo = ganhos - gastos + dinheiro adicionado - valor na caixinha
     const calculatedBalance = income - expense;
-    const totalBalance = calculatedBalance + addedBalance;
+    const totalBalance = calculatedBalance + addedBalance - caixinhaTotal;
 
     if (privacyMode) {
         document.getElementById('total-income').textContent = '••••••';
         document.getElementById('total-expense').textContent = '••••••';
+        document.getElementById('total-caixinha').textContent = '••••••';
         document.getElementById('total-investment').textContent = '••••••';
         document.getElementById('balance').textContent = '••••••';
         document.getElementById('balance-detail').textContent = 'Dinheiro adicionado: ••••••';
     } else {
         document.getElementById('total-income').textContent = formatCurrency(income);
         document.getElementById('total-expense').textContent = formatCurrency(expense);
+        document.getElementById('total-caixinha').textContent = formatCurrency(caixinhaTotal);
         document.getElementById('total-investment').textContent = formatCurrency(investment);
         document.getElementById('balance').textContent = formatCurrency(totalBalance);
         document.getElementById('balance-detail').textContent = `Dinheiro adicionado: ${formatCurrency(addedBalance)}`;
@@ -516,8 +533,11 @@ function createTransactionElement(transaction) {
     
     const formattedDate = formatDate(transaction.date);
     const formattedAmount = privacyMode ? '••••••' : formatCurrency(transaction.amount);
-    const amountClass = transaction.type === 'income' ? 'transaction-item__amount--income' : 'transaction-item__amount--expense';
-    const sign = transaction.type === 'income' ? '+' : '-';
+    const amountClass = transaction.type === 'income' ? 'transaction-item__amount--income' :
+                        transaction.type === 'investment' ? 'transaction-item__amount--investment' :
+                        transaction.type === 'caixinha' ? 'transaction-item__amount--caixinha' :
+                        'transaction-item__amount--expense';
+    const sign = transaction.type === 'income' ? '+' : (transaction.type === 'investment' || transaction.type === 'caixinha' ? '↑' : '-');
 
     div.innerHTML = `
         <div class="transaction-item__content">
