@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D & N Pizzaria</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header__inner">
+      <a href="#" class="logo">
+        <span class="logo__text">D & N Pizzaria</span>
+      </a>
+      <div class="search-bar">
+        <input type="text" class="search-bar__input" placeholder="Buscar no cardápio..." id="search-input" />
+        <button type="button" class="search-bar__btn" aria-label="Buscar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+      </div>
+      <div class="header__actions">
+        <button type="button" class="header__cart" id="cart-btn" aria-label="Carrinho">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="header__cart-count" id="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Layout: sidebar + conteúdo -->
+  <div class="main-wrap">
+    <!-- Abas à esquerda -->
+    <aside class="sidebar">
+      <nav class="sidebar__nav">
+        <button type="button" class="sidebar__item sidebar__item--active" data-category="all">Todos</button>
+        <button type="button" class="sidebar__item" data-category="hamburguer">Hambúrguer</button>
+        <button type="button" class="sidebar__item" data-category="pizza">Pizza</button>
+        <button type="button" class="sidebar__item" data-category="esfiha">Esfihas</button>
+        <button type="button" class="sidebar__item" data-category="bebida">Bebidas</button>
+      </nav>
+    </aside>
+
+    <!-- Conteúdo principal -->
+    <main class="content">
+      <!-- Banner -->
+      <section class="banner">
+        <div class="banner__inner">
+          <div class="banner__slide">
+            <div class="banner__content">
+              <h2>Até 40% em ofertas</h2>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Produtos -->
+      <section class="section">
+        <div class="section__inner">
+          <h2 class="section__title" id="section-title">Cardápio</h2>
+          <div class="products" id="products">
+            <!-- Produtos injetados via JS -->
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Carrinho lateral -->
+  <aside class="cart" id="cart-panel">
+    <div class="cart__overlay" id="cart-overlay"></div>
+    <div class="cart__panel">
+      <div class="cart__header">
+        <h3>Carrinho</h3>
+        <button type="button" class="cart__close" id="cart-close" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="cart__body">
+        <div class="cart__empty" id="cart-empty">
+          <p>Seu carrinho está vazio</p>
+          <span>Adicione produtos para continuar</span>
+        </div>
+        <ul class="cart__list" id="cart-list"></ul>
+      </div>
+      <div class="cart__footer" id="cart-footer" hidden>
+        <div class="cart__total">
+          <span>Total:</span>
+          <strong id="cart-total">R$ 0,00</strong>
+        </div>
+        <button type="button" class="btn btn--primary btn--block" id="cart-checkout">Finalizar compra</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__col">
+        <h4>D & N Pizzaria</h4>
+        <p>Pizza quentinha e delivery.</p>
+      </div>
+      <div class="footer__col">
+        <h4>Contato</h4>
+        <p>contato@dnpizzaria.com.br</p>
+        <p>(11) 99999-9999</p>
+      </div>
+      <div class="footer__col">
+        <h4>Atendimento</h4>
+        <p>Ter a Dom: 18h às 23h</p>
+      </div>
+      <div class="footer__bottom">
+        <p>&copy; 2025 D & N Pizzaria.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
