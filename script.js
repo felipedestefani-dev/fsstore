@@ -1,4 +1,64 @@
 // ===== SWAG GANG — Produtos =====
+// ===== Loader (tela de carregamento) =====
+(function initPageLoader() {
+  const loader = document.getElementById('page-loader');
+  const fill = document.getElementById('page-loader-fill');
+  if (!loader || !fill) return;
+
+  const bar = fill.parentElement;
+  let progress = 0;
+  const minDurationMs = 4000;
+  const startMs = performance.now();
+  let loadFired = false;
+  let done = false;
+
+  function setProgress(value) {
+    const v = Math.max(0, Math.min(100, value));
+    fill.style.width = `${v}%`;
+    if (bar) bar.setAttribute('aria-valuenow', String(Math.round(v)));
+  }
+
+  function doFinish() {
+    if (done) return;
+    done = true;
+    window.clearInterval(tick);
+    setProgress(100);
+
+    window.setTimeout(() => {
+      loader.classList.add('is-hidden');
+      window.setTimeout(() => loader.setAttribute('hidden', ''), 280);
+    }, 220);
+  }
+
+  setProgress(8);
+  const tick = window.setInterval(() => {
+    const elapsed = performance.now() - startMs;
+    if (loadFired) {
+      // depois do load, continua progredindo devagar até bater 4s
+      progress = Math.min(99, progress + (1 + Math.random() * 4));
+      if (elapsed >= minDurationMs) doFinish();
+      else setProgress(progress);
+      return;
+    }
+
+    progress = Math.min(92, progress + (3 + Math.random() * 8));
+    setProgress(progress);
+  }, 120);
+
+  window.addEventListener(
+    'load',
+    () => {
+      loadFired = true;
+      const elapsed = performance.now() - startMs;
+      if (elapsed >= minDurationMs) doFinish();
+    },
+    { once: true }
+  );
+
+  // fallback (caso o load trave por algum motivo)
+  window.setTimeout(doFinish, 8000);
+})();
+
 const products = [
   { id: '1', name: 'Hoodie Oversized SG', category: 'Hoodies', price: 299.90, image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&h=500&fit=crop' },
   { id: '2', name: 'T-Shirt Logo Preto', category: 'Camisetas', price: 129.90, image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop' },
