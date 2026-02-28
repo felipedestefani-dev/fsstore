@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Swag Gang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="header__inner">
+      <a href="index.html" class="logo">
+        <img src="WhatsApp%20Image%202026-02-27%20at%2013.38.03.jpeg" alt="Swag Gang" class="logo__img" />
+        <span class="logo__text"><span class="logo__swag">SWAG</span> <span class="logo__gang">GANG</span></span>
+      </a>
+      <nav class="nav">
+        <a href="index.html">Loja</a>
+        <a href="admin-login.html" aria-current="page">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="auth">
+    <div class="auth__inner">
+      <h1 class="auth__title">Área Administrativa</h1>
+      <p class="auth__subtitle">Entre para gerenciar o catálogo.</p>
+
+      <form class="auth__form" id="admin-login-form">
+        <label class="auth__field">
+          <span>Usuário</span>
+          <input id="admin-user" name="user" type="text" autocomplete="username" required />
+        </label>
+
+        <label class="auth__field">
+          <span>Senha</span>
+          <input id="admin-pass" name="pass" type="password" autocomplete="current-password" required />
+        </label>
+
+        <p class="auth__error" id="admin-login-error" hidden>Usuário ou senha inválidos.</p>
+
+        <button type="submit" class="btn btn--primary btn--block">Entrar</button>
+      </form>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+  <script src="admin-login.js"></script>
+</body>
+</html>

@@ -59,16 +59,19 @@
   window.setTimeout(doFinish, 8000);
 })();
 
-const products = [
-  { id: '1', name: 'Hoodie Oversized SG', category: 'Hoodies', price: 299.90, image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&h=500&fit=crop' },
-  { id: '2', name: 'T-Shirt Logo Preto', category: 'Camisetas', price: 129.90, image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop' },
-  { id: '3', name: 'Cap Trucker', category: 'Acessórios', price: 89.90, image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500&h=500&fit=crop' },
-  { id: '4', name: 'Hoodie Zip Cinza', category: 'Hoodies', price: 329.90, image: 'https://images.unsplash.com/photo-1548126032-079a0fb0099d?w=500&h=500&fit=crop' },
-  { id: '5', name: 'T-Shirt Branca Básica', category: 'Camisetas', price: 99.90, image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500&h=500&fit=crop' },
-  { id: '6', name: 'Jogger Cargo', category: 'Calças', price: 249.90, image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=500&h=500&fit=crop' },
-  { id: '7', name: 'Moletom Cropped', category: 'Moletons', price: 279.90, image: 'https://images.unsplash.com/photo-1578768079052-aa76e52d6e7f?w=500&h=500&fit=crop' },
-  { id: '8', name: 'Bucket Hat SG', category: 'Acessórios', price: 79.90, image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500&h=500&fit=crop' },
-];
+const PRODUCTS_KEY = 'swaggang_products';
+
+function loadProducts() {
+  try {
+    const data = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]');
+    if (!Array.isArray(data)) return [];
+    return data.filter((p) => p && typeof p === 'object' && p.id && p.name && typeof p.price === 'number');
+  } catch {
+    return [];
+  }
+}
+
+let products = loadProducts();
 
 // ===== Estado =====
 let cart = JSON.parse(localStorage.getItem('swaggang_cart') || '[]');
@@ -97,6 +100,18 @@ function saveCart() {
 
 // ===== Renderizar produtos =====
 function renderProducts() {
+  if (!productsEl) return;
+  products = loadProducts();
+  if (products.length === 0) {
+    productsEl.innerHTML = `
+      <div class="products-empty">
+        <h3>Catálogo vazio</h3>
+        <p>Sem produtos por enquanto. Volte em breve.</p>
+      </div>
+    `;
+    return;
+  }
+
   productsEl.innerHTML = products
     .map(
       (p) => `
@@ -106,7 +121,7 @@ function renderProducts() {
       </div>
       <div class="product-card__body">
         <h3 class="product-card__name">${p.name}</h3>
-        <span class="product-card__category">${p.category}</span>
+        <span class="product-card__category">${p.category || ''}</span>
         <p class="product-card__price">${formatPrice(p.price)}</p>
         <button type="button" class="product-card__btn" data-add="${p.id}">Adicionar</button>
       </div>
@@ -118,10 +133,12 @@ function renderProducts() {
 
 // ===== Carrinho =====
 function updateCartCount() {
+  if (!cartCount) return;
   cartCount.textContent = cart.reduce((acc, item) => acc + item.qty, 0);
 }
 
 function updateCartUI() {
+  if (!cartEmpty || !cartFooter || !cartList || !cartTotal) return;
   updateCartCount();
   if (cart.length === 0) {
     cartEmpty.hidden = false;
@@ -152,6 +169,7 @@ function updateCartUI() {
 }
 
 function addToCart(productId) {
+  products = loadProducts();
   const product = products.find((p) => p.id === productId);
   if (!product) return;
   const existing = cart.find((i) => i.id === productId);
@@ -168,10 +186,12 @@ function removeFromCart(productId) {
 }
 
 function openCart() {
+  if (!cartPanel) return;
   cartPanel.classList.add('is-open');
 }
 
 function closeCart() {
+  if (!cartPanel) return;
   cartPanel.classList.remove('is-open');
 }
 
@@ -187,17 +207,18 @@ document.addEventListener('click', (e) => {
   if (removeBtn) removeFromCart(removeBtn.dataset.remove);
 });
 
-cartBtn.addEventListener('click', openCart);
-cartOverlay.addEventListener('click', closeCart);
-cartClose.addEventListener('click', closeCart);
-cartCheckout.addEventListener('click', () => {
-  if (cart.length === 0) return;
-  alert('Obrigado pelo interesse! Em um site real, você seria redirecionado ao checkout. — Swag Gang');
-  cart = [];
-  saveCart();
-  updateCartUI();
-  closeCart();
-});
+if (cartBtn) cartBtn.addEventListener('click', openCart);
+if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
+if (cartClose) cartClose.addEventListener('click', closeCart);
+if (cartCheckout)
+  cartCheckout.addEventListener('click', () => {
+    if (cart.length === 0) return;
+    alert('Obrigado pelo interesse! Em um site real, você seria redirecionado ao checkout. — Swag Gang');
+    cart = [];
+    saveCart();
+    updateCartUI();
+    closeCart();
+  });
 
 // ===== Inicialização =====
 renderProducts();
