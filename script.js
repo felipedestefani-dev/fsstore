@@ -1,225 +1,357 @@
-// ===== SWAG GANG — Produtos =====
-// ===== Loader (tela de carregamento) =====
-(function initPageLoader() {
-  const loader = document.getElementById('page-loader');
-  const fill = document.getElementById('page-loader-fill');
-  if (!loader || !fill) return;
-
-  const bar = fill.parentElement;
-  let progress = 0;
-  const minDurationMs = 4000;
-  const startMs = performance.now();
-  let loadFired = false;
-  let done = false;
-
-  function setProgress(value) {
-    const v = Math.max(0, Math.min(100, value));
-    fill.style.width = `${v}%`;
-    if (bar) bar.setAttribute('aria-valuenow', String(Math.round(v)));
+// Progresso na programação — app (requer login)
+(function () {
+  if (typeof getCurrentUser === 'undefined' || !getCurrentUser()) {
+    window.location.href = 'login.html';
+    return;
   }
 
-  function doFinish() {
-    if (done) return;
-    done = true;
-    window.clearInterval(tick);
-    setProgress(100);
+  var CURRENT_USER_KEY = 'progresso_current_user';
+  var REGISTROS_PREFIX = 'progresso_registros_';
+  var ANOTACOES_PREFIX = 'progresso_anotacoes_';
+  var CDN = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons';
 
-    window.setTimeout(() => {
-      loader.classList.add('is-hidden');
-      window.setTimeout(() => loader.setAttribute('hidden', ''), 280);
-    }, 220);
+  var LINGUAGENS = [
+    { id: 'javascript', nome: 'JavaScript', logo: CDN + '/javascript/javascript-original.svg' },
+    { id: 'python', nome: 'Python', logo: CDN + '/python/python-original.svg' },
+    { id: 'html5', nome: 'HTML', logo: CDN + '/html5/html5-original.svg' },
+    { id: 'css3', nome: 'CSS', logo: CDN + '/css3/css3-original.svg' },
+    { id: 'react', nome: 'React', logo: CDN + '/react/react-original.svg' },
+    { id: 'typescript', nome: 'TypeScript', logo: CDN + '/typescript/typescript-original.svg' },
+    { id: 'nodejs', nome: 'Node.js', logo: CDN + '/nodejs/nodejs-original.svg' },
+  ];
+
+  var linguagemAtiva = 'todos';
+
+  function sanitizeEmailForKey(email) {
+    return (email || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
   }
 
-  setProgress(8);
-  const tick = window.setInterval(() => {
-    const elapsed = performance.now() - startMs;
-    if (loadFired) {
-      // depois do load, continua progredindo devagar até bater 4s
-      progress = Math.min(99, progress + (1 + Math.random() * 4));
-      if (elapsed >= minDurationMs) doFinish();
-      else setProgress(progress);
+  function getRegistrosKey() {
+    var user = getCurrentUserEmail();
+    return user ? REGISTROS_PREFIX + sanitizeEmailForKey(user) : null;
+  }
+
+  function getCurrentUserEmail() {
+    return localStorage.getItem(CURRENT_USER_KEY);
+  }
+
+  function loadRegistros() {
+    var key = getRegistrosKey();
+    if (!key) return [];
+    try {
+      var raw = localStorage.getItem(key);
+      var data = raw ? JSON.parse(raw) : [];
+      return Array.isArray(data) ? data : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveRegistros(registros) {
+    var key = getRegistrosKey();
+    if (key) localStorage.setItem(key, JSON.stringify(registros));
+  }
+
+  function getAnotacoesKey() {
+    var user = getCurrentUserEmail();
+    return user ? ANOTACOES_PREFIX + sanitizeEmailForKey(user) : null;
+  }
+
+  function loadAnotacoes() {
+    var key = getAnotacoesKey();
+    if (!key) return '';
+    try {
+      return localStorage.getItem(key) || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function saveAnotacoes(text) {
+    var key = getAnotacoesKey();
+    if (key) localStorage.setItem(key, text);
+  }
+
+  function makeId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2);
+  }
+
+  function formatMinutos(minutos) {
+    if (minutos < 60) return minutos + ' min';
+    var h = Math.floor(minutos / 60);
+    var m = minutos % 60;
+    return m ? h + 'h ' + m + 'min' : h + 'h';
+  }
+
+  function formatData(isoString) {
+    var d = new Date(isoString);
+    var hoje = new Date();
+    var ontem = new Date(hoje);
+    ontem.setDate(ontem.getDate() - 1);
+    if (d.toDateString() === hoje.toDateString()) return 'Hoje';
+    if (d.toDateString() === ontem.toDateString()) return 'Ontem';
+    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+  }
+
+  function getNomeLinguagem(id) {
+    var l = LINGUAGENS.find(function (x) { return x.id === id; });
+    return l ? l.nome : id;
+  }
+
+  var tabsContainer = document.getElementById('tabs-linguagens');
+  var selectLinguagem = document.getElementById('estudo-linguagem');
+  var form = document.getElementById('form-estudo');
+  var totalHorasEl = document.getElementById('total-horas');
+  var totalSessoesEl = document.getElementById('total-sessoes');
+  var topicosList = document.getElementById('topicos-list');
+  var topicosEmpty = document.getElementById('topicos-empty');
+  var historicoList = document.getElementById('historico-list');
+  var historicoEmpty = document.getElementById('historico-empty');
+  var viewProgresso = document.getElementById('view-progresso');
+  var viewAnotacoes = document.getElementById('view-anotacoes');
+  var anotacoesTextarea = document.getElementById('anotacoes-textarea');
+  var anotacoesStatus = document.getElementById('anotacoes-status');
+
+  function setView(viewName) {
+    var isProgresso = viewName === 'progresso';
+    if (viewProgresso) viewProgresso.hidden = !isProgresso;
+    if (viewAnotacoes) viewAnotacoes.hidden = isProgresso;
+    document.querySelectorAll('.view-switcher__btn').forEach(function (btn) {
+      var active = btn.getAttribute('data-view') === viewName;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-selected', active);
+    });
+    if (viewName === 'anotacoes' && anotacoesTextarea) {
+      anotacoesTextarea.value = loadAnotacoes();
+    }
+  }
+
+  function showAnotacoesSaved() {
+    if (!anotacoesStatus) return;
+    anotacoesStatus.textContent = 'Salvo.';
+    clearTimeout(anotacoesStatus._saveTimeout);
+    anotacoesStatus._saveTimeout = setTimeout(function () {
+      anotacoesStatus.textContent = '';
+    }, 2000);
+  }
+
+  function renderTabs() {
+    if (!tabsContainer) return;
+    var html = '<button type="button" class="tabs__btn tabs__btn--todos is-active" data-linguagem="todos"><span>Todos</span></button>';
+    LINGUAGENS.forEach(function (l) {
+      html += '<button type="button" class="tabs__btn" data-linguagem="' + l.id + '">' +
+        '<img src="' + l.logo + '" alt="' + l.nome + '" />' +
+        '<span>' + l.nome + '</span></button>';
+    });
+    tabsContainer.innerHTML = html;
+
+    tabsContainer.querySelectorAll('.tabs__btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        linguagemAtiva = btn.getAttribute('data-linguagem');
+        tabsContainer.querySelectorAll('.tabs__btn').forEach(function (b) { b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        render(getRegistros());
+      });
+    });
+  }
+
+  function renderSelect() {
+    if (!selectLinguagem) return;
+    selectLinguagem.innerHTML = LINGUAGENS.map(function (l) {
+      return '<option value="' + l.id + '">' + l.nome + '</option>';
+    }).join('');
+  }
+
+  function getRegistros() {
+    return loadRegistros().map(function (r) {
+      var lid = r.linguagem && LINGUAGENS.some(function (l) { return l.id === r.linguagem; }) ? r.linguagem : (LINGUAGENS[0] && LINGUAGENS[0].id);
+      return {
+        id: r.id || makeId(),
+        linguagem: lid,
+        tema: (r.tema || '').trim() || 'Outro',
+        minutos: typeof r.minutos === 'number' ? r.minutos : parseInt(r.minutos, 10) || 0,
+        data: r.data || new Date().toISOString(),
+      };
+    });
+  }
+
+  function filtrarPorLinguagem(registros) {
+    if (linguagemAtiva === 'todos') return registros;
+    return registros.filter(function (r) { return r.linguagem === linguagemAtiva; });
+  }
+
+  function getTotalMinutos(registros) {
+    return registros.reduce(function (acc, r) {
+      return acc + (r.minutos || 0);
+    }, 0);
+  }
+
+  function getMinutosPorTema(registros) {
+    var porTema = {};
+    registros.forEach(function (r) {
+      var t = r.tema || 'Outro';
+      porTema[t] = (porTema[t] || 0) + (r.minutos || 0);
+    });
+    return porTema;
+  }
+
+  function renderResumo(registros) {
+    var totalMin = getTotalMinutos(registros);
+    var horas = Math.floor(totalMin / 60);
+    var min = totalMin % 60;
+    var horasStr = horas ? horas + 'h ' : '';
+    if (min) horasStr += min + 'min';
+    else if (!horas) horasStr = '0 min';
+    if (totalHorasEl) totalHorasEl.textContent = horasStr;
+    if (totalSessoesEl) totalSessoesEl.textContent = String(registros.length);
+  }
+
+  function renderTopicos(registros) {
+    if (!topicosList) return;
+    var porTema = getMinutosPorTema(registros);
+    var temas = Object.keys(porTema).sort();
+    var maxMin = Math.max.apply(null, temas.map(function (t) {
+      return porTema[t];
+    })) || 1;
+
+    if (temas.length === 0) {
+      topicosList.innerHTML = '';
+      if (topicosEmpty) topicosEmpty.hidden = false;
       return;
     }
 
-    progress = Math.min(92, progress + (3 + Math.random() * 8));
-    setProgress(progress);
-  }, 120);
-
-  window.addEventListener(
-    'load',
-    () => {
-      loadFired = true;
-      const elapsed = performance.now() - startMs;
-      if (elapsed >= minDurationMs) doFinish();
-    },
-    { once: true }
-  );
-
-  // fallback (caso o load trave por algum motivo)
-  window.setTimeout(doFinish, 8000);
-})();
-
-const PRODUCTS_KEY = 'swaggang_products';
-
-function loadProducts() {
-  try {
-    const data = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]');
-    if (!Array.isArray(data)) return [];
-    return data.filter((p) => p && typeof p === 'object' && p.id && p.name && typeof p.price === 'number');
-  } catch {
-    return [];
-  }
-}
-
-let products = loadProducts();
-
-// ===== Estado =====
-let cart = JSON.parse(localStorage.getItem('swaggang_cart') || '[]');
-
-// ===== Elementos =====
-const productsEl = document.getElementById('products');
-const cartBtn = document.getElementById('cart-btn');
-const cartPanel = document.getElementById('cart-panel');
-const cartOverlay = document.getElementById('cart-overlay');
-const cartClose = document.getElementById('cart-close');
-const cartCount = document.getElementById('cart-count');
-const cartList = document.getElementById('cart-list');
-const cartEmpty = document.getElementById('cart-empty');
-const cartFooter = document.getElementById('cart-footer');
-const cartTotal = document.getElementById('cart-total');
-const cartCheckout = document.getElementById('cart-checkout');
-
-// ===== Helpers =====
-function formatPrice(value) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-}
-
-function saveCart() {
-  localStorage.setItem('swaggang_cart', JSON.stringify(cart));
-}
-
-// ===== Renderizar produtos =====
-function renderProducts() {
-  if (!productsEl) return;
-  products = loadProducts();
-  if (products.length === 0) {
-    productsEl.innerHTML = `
-      <div class="products-empty">
-        <h3>Catálogo vazio</h3>
-        <p>Sem produtos por enquanto. Volte em breve.</p>
-      </div>
-    `;
-    return;
+    if (topicosEmpty) topicosEmpty.hidden = true;
+    topicosList.innerHTML = temas
+      .map(function (tema) {
+        var min = porTema[tema];
+        var pct = Math.round((min / maxMin) * 100);
+        return (
+          '<div class="topico-card">' +
+          '<div class="topico-card__top">' +
+          '<span class="topico-card__nome">' + tema + '</span>' +
+          '<span class="topico-card__tempo">' + formatMinutos(min) + '</span>' +
+          '</div>' +
+          '<div class="topico-card__bar">' +
+          '<div class="topico-card__bar-fill" style="width:' + pct + '%"></div>' +
+          '</div>' +
+          '</div>'
+        );
+      })
+      .join('');
   }
 
-  productsEl.innerHTML = products
-    .map(
-      (p) => `
-    <article class="product-card" data-id="${p.id}">
-      <div class="product-card__image">
-        <img src="${p.image}" alt="${p.name}" loading="lazy" />
-      </div>
-      <div class="product-card__body">
-        <h3 class="product-card__name">${p.name}</h3>
-        <span class="product-card__category">${p.category || ''}</span>
-        <p class="product-card__price">${formatPrice(p.price)}</p>
-        <button type="button" class="product-card__btn" data-add="${p.id}">Adicionar</button>
-      </div>
-    </article>
-  `
-    )
-    .join('');
-}
+  function renderHistorico(registros) {
+    if (!historicoList) return;
+    var list = registros
+      .slice()
+      .sort(function (a, b) {
+        return new Date(b.data) - new Date(a.data);
+      })
+      .slice(0, 30);
 
-// ===== Carrinho =====
-function updateCartCount() {
-  if (!cartCount) return;
-  cartCount.textContent = cart.reduce((acc, item) => acc + item.qty, 0);
-}
+    if (list.length === 0) {
+      historicoList.innerHTML = '';
+      historicoList.setAttribute('data-empty', 'true');
+      if (historicoEmpty) historicoEmpty.hidden = false;
+      return;
+    }
 
-function updateCartUI() {
-  if (!cartEmpty || !cartFooter || !cartList || !cartTotal) return;
-  updateCartCount();
-  if (cart.length === 0) {
-    cartEmpty.hidden = false;
-    cartFooter.hidden = true;
-    cartList.innerHTML = '';
-    return;
+    historicoList.setAttribute('data-empty', 'false');
+    if (historicoEmpty) historicoEmpty.hidden = true;
+    historicoList.innerHTML = list
+      .map(function (r) {
+        return (
+          '<li class="historico-item" data-id="' + r.id + '">' +
+          '<div>' +
+          '<div class="historico-item__tema">' + r.tema + ' <span class="historico-item__lang">(' + getNomeLinguagem(r.linguagem) + ')</span></div>' +
+          '<div class="historico-item__meta">' + formatData(r.data) + '</div>' +
+          '</div>' +
+          '<div>' +
+          '<span class="historico-item__tempo">' + formatMinutos(r.minutos) + '</span>' +
+          '<button type="button" class="btn btn--danger historico-item__del" data-delete="' + r.id + '" aria-label="Excluir">Excluir</button>' +
+          '</div>' +
+          '</li>'
+        );
+      })
+      .join('');
   }
-  cartEmpty.hidden = true;
-  cartFooter.hidden = false;
-  cartList.innerHTML = cart
-    .map(
-      (item) => `
-    <li class="cart-item" data-id="${item.id}">
-      <div class="cart-item__image">
-        <img src="${item.image}" alt="${item.name}" />
-      </div>
-      <div class="cart-item__info">
-        <div class="cart-item__name">${item.name}</div>
-        <div class="cart-item__price">${formatPrice(item.price)} ${item.qty > 1 ? '× ' + item.qty : ''}</div>
-      </div>
-      <button type="button" class="cart-item__remove" data-remove="${item.id}">Remover</button>
-    </li>
-  `
-    )
-    .join('');
-  const total = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
-  cartTotal.textContent = formatPrice(total);
-}
 
-function addToCart(productId) {
-  products = loadProducts();
-  const product = products.find((p) => p.id === productId);
-  if (!product) return;
-  const existing = cart.find((i) => i.id === productId);
-  if (existing) existing.qty += 1;
-  else cart.push({ id: product.id, name: product.name, price: product.price, image: product.image, qty: 1 });
-  saveCart();
-  updateCartUI();
-}
-
-function removeFromCart(productId) {
-  cart = cart.filter((i) => i.id !== productId);
-  saveCart();
-  updateCartUI();
-}
-
-function openCart() {
-  if (!cartPanel) return;
-  cartPanel.classList.add('is-open');
-}
-
-function closeCart() {
-  if (!cartPanel) return;
-  cartPanel.classList.remove('is-open');
-}
-
-// ===== Eventos =====
-document.addEventListener('click', (e) => {
-  const addBtn = e.target.closest('[data-add]');
-  if (addBtn) {
-    addToCart(addBtn.dataset.add);
-    openCart();
-    return;
+  function render(allRegistros) {
+    var registros = filtrarPorLinguagem(allRegistros);
+    renderResumo(registros);
+    renderTopicos(registros);
+    renderHistorico(registros);
   }
-  const removeBtn = e.target.closest('[data-remove]');
-  if (removeBtn) removeFromCart(removeBtn.dataset.remove);
-});
 
-if (cartBtn) cartBtn.addEventListener('click', openCart);
-if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
-if (cartClose) cartClose.addEventListener('click', closeCart);
-if (cartCheckout)
-  cartCheckout.addEventListener('click', () => {
-    if (cart.length === 0) return;
-    alert('Obrigado pelo interesse! Em um site real, você seria redirecionado ao checkout. — Swag Gang');
-    cart = [];
-    saveCart();
-    updateCartUI();
-    closeCart();
+  function initApp() {
+    var headerEmail = document.getElementById('header-email');
+    if (headerEmail) headerEmail.textContent = getCurrentUserEmail();
+    renderTabs();
+    renderSelect();
+    render(getRegistros());
+    if (anotacoesTextarea) {
+      anotacoesTextarea.value = loadAnotacoes();
+      anotacoesTextarea.addEventListener('input', function () {
+        clearTimeout(anotacoesTextarea._saveTimeout);
+        anotacoesTextarea._saveTimeout = setTimeout(function () {
+          saveAnotacoes(anotacoesTextarea.value);
+          showAnotacoesSaved();
+        }, 400);
+      });
+      anotacoesTextarea.addEventListener('blur', function () {
+        saveAnotacoes(anotacoesTextarea.value);
+        showAnotacoesSaved();
+      });
+    }
+    document.querySelectorAll('.view-switcher__btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        setView(btn.getAttribute('data-view'));
+      });
+    });
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var langInput = document.getElementById('estudo-linguagem');
+    var temaInput = document.getElementById('estudo-tema');
+    var minInput = document.getElementById('estudo-minutos');
+    var linguagem = (langInput && langInput.value) || (LINGUAGENS[0] && LINGUAGENS[0].id);
+    var tema = (temaInput && temaInput.value || '').trim() || 'Outro';
+    var minutos = parseInt(minInput && minInput.value, 10) || 0;
+    if (!linguagem || minutos < 1) return;
+
+    var registros = getRegistros();
+    registros.unshift({
+      id: makeId(),
+      linguagem: linguagem,
+      tema: tema,
+      minutos: minutos,
+      data: new Date().toISOString(),
+    });
+    saveRegistros(registros);
+    render(registros);
+    form.reset();
   });
 
-// ===== Inicialização =====
-renderProducts();
-updateCartUI();
+  historicoList.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-delete]');
+    if (!btn) return;
+    var id = btn.getAttribute('data-delete');
+    if (!id) return;
+    var registros = getRegistros().filter(function (r) {
+      return r.id !== id;
+    });
+    saveRegistros(registros);
+    render(registros);
+  });
+
+  var btnLogout = document.getElementById('btn-logout');
+  if (btnLogout) {
+    btnLogout.addEventListener('click', function () {
+      if (typeof clearCurrentUser === 'function') clearCurrentUser();
+      window.location.href = 'login.html';
+    });
+  }
+
+  initApp();
+})();

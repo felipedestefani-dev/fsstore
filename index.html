@@ -3,109 +3,109 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Swag Gang — Streetwear</title>
+  <title>Controler — Seu progresso na programação</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="page-loader" id="page-loader" role="status" aria-live="polite" aria-label="Carregando">
-    <div class="page-loader__inner">
-      <img
-        src="WhatsApp%20Image%202026-02-27%20at%2013.38.03.jpeg"
-        alt="Swag Gang"
-        class="page-loader__logo"
-      />
-      <div class="page-loader__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-        <div class="page-loader__bar-fill" id="page-loader-fill" style="width: 0%"></div>
+  <div class="app" id="app">
+    <header class="header">
+      <div class="header__inner">
+        <div class="brand">
+          <img class="brand__logo" src="logo.svg" alt="" width="40" height="40" />
+          <div>
+            <h1 class="brand__name">Controler</h1>
+            <p class="brand__tagline">Seu progresso na programação sob controle</p>
+          </div>
+        </div>
+        <div class="header__user">
+          <span class="header__email" id="header-email"></span>
+          <button type="button" class="btn btn--ghost" id="btn-logout">Sair</button>
+        </div>
       </div>
-      <div class="page-loader__label">Carregando…</div>
-    </div>
-  </div>
-  <header class="header">
-    <div class="header__inner">
-      <a href="index.html" class="logo">
-        <img src="WhatsApp%20Image%202026-02-27%20at%2013.38.03.jpeg" alt="Swag Gang" class="logo__img" />
-        <span class="logo__text"><span class="logo__swag">SWAG</span> <span class="logo__gang">GANG</span></span>
-      </a>
-      <nav class="nav">
-        <a href="#novidades">Novidades</a>
-        <a href="#masculino">Masculino</a>
-        <a href="#feminino">Feminino</a>
-        <a href="#acessorios">Acessórios</a>
-        <a href="admin-login.html">Admin</a>
+    </header>
+
+    <nav class="view-switcher" role="tablist" aria-label="Área do app">
+      <button type="button" class="view-switcher__btn is-active" data-view="progresso" aria-selected="true">Progresso</button>
+      <button type="button" class="view-switcher__btn" data-view="anotacoes" aria-selected="false">Anotações</button>
+    </nav>
+
+    <div class="view-panel view-panel--progresso" id="view-progresso">
+      <nav class="tabs" role="tablist" id="tabs-linguagens">
+        <!-- preenchido pelo script -->
       </nav>
-      <button type="button" class="header__cart" id="cart-btn" aria-label="Carrinho">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        <span class="header__cart-count" id="cart-count">0</span>
-      </button>
-    </div>
-  </header>
 
-  <section class="hero">
-    <div class="hero__inner">
-      <p class="hero__label">Nova coleção 2025</p>
-      <h1 class="hero__title">Streetwear<br />sem limites.</h1>
-      <a href="#produtos" class="hero__cta">Ver coleção</a>
-    </div>
-  </section>
-
-  <main class="main">
-    <section class="section" id="produtos">
-      <div class="section__inner">
-        <h2 class="section__title">Catálogo</h2>
-        <div class="products" id="products"></div>
-      </div>
-    </section>
-  </main>
-
-  <aside class="cart" id="cart-panel">
-    <div class="cart__overlay" id="cart-overlay"></div>
-    <div class="cart__panel">
-      <div class="cart__header">
-        <h3>Carrinho</h3>
-        <button type="button" class="cart__close" id="cart-close" aria-label="Fechar">&times;</button>
-      </div>
-      <div class="cart__body">
-        <div class="cart__empty" id="cart-empty">
-          <p>Seu carrinho está vazio</p>
-          <span>Adicione peças da Swag Gang</span>
+    <main class="main">
+      <section class="resumo">
+        <h2 class="section-title">Resumo</h2>
+        <div class="resumo-cards">
+          <div class="resumo-card">
+            <span class="resumo-card__label">Horas estudadas</span>
+            <span class="resumo-card__value" id="total-horas">0h</span>
+          </div>
+          <div class="resumo-card">
+            <span class="resumo-card__label">Sessões</span>
+            <span class="resumo-card__value" id="total-sessoes">0</span>
+          </div>
         </div>
-        <ul class="cart__list" id="cart-list"></ul>
-      </div>
-      <div class="cart__footer" id="cart-footer" hidden>
-        <div class="cart__total">
-          <span>Total</span>
-          <strong id="cart-total">R$ 0,00</strong>
-        </div>
-        <button type="button" class="btn btn--primary btn--block" id="cart-checkout">Finalizar compra</button>
-      </div>
-    </div>
-  </aside>
+      </section>
 
-  <footer class="footer">
-    <div class="footer__inner">
-      <div class="footer__col">
-        <span class="footer__logo">SWAG GANG</span>
-        <p>Streetwear que representa.</p>
-      </div>
-      <div class="footer__col">
-        <h4>Links</h4>
-        <a href="#">Sobre</a>
-        <a href="#">Contato</a>
-        <a href="#">Trocas</a>
-      </div>
-      <div class="footer__col">
-        <h4>Redes</h4>
-        <p>@swaggang</p>
-      </div>
-      <div class="footer__bottom">
-        <p>&copy; 2025 Swag Gang. Todos os direitos reservados.</p>
-      </div>
-    </div>
-  </footer>
+      <section class="adicionar">
+        <h2 class="section-title">Registrar estudo</h2>
+        <form class="form" id="form-estudo">
+          <div class="form__row">
+            <label class="form__field">
+              <span>Linguagem</span>
+              <select id="estudo-linguagem" required>
+                <option value="">Selecione</option>
+                <!-- opções preenchidas pelo script -->
+              </select>
+            </label>
+            <label class="form__field">
+              <span>O que você estudou?</span>
+              <input type="text" id="estudo-tema" placeholder="Ex: funções, componentes" required />
+            </label>
+            <label class="form__field">
+              <span>Tempo (min)</span>
+              <input type="number" id="estudo-minutos" min="1" max="999" placeholder="30" required />
+            </label>
+          </div>
+          <button type="submit" class="btn btn--primary">Adicionar</button>
+        </form>
+      </section>
 
+      <section class="topicos">
+        <h2 class="section-title">Por tópico</h2>
+        <p class="section-hint">Tempo total por tema que você registrou.</p>
+        <div class="topicos-list" id="topicos-list"></div>
+        <p class="empty-hint" id="topicos-empty">Registre estudos acima para ver o progresso por tópico.</p>
+      </section>
+
+      <section class="historico">
+        <h2 class="section-title">Histórico recente</h2>
+        <ul class="historico-list" id="historico-list"></ul>
+        <p class="empty-hint" id="historico-empty">Nenhum registro ainda. Comece registrando um estudo!</p>
+      </section>
+    </main>
+    </div>
+
+    <div class="view-panel view-panel--anotacoes" id="view-anotacoes" hidden>
+      <section class="anotacoes">
+        <h2 class="section-title">Anotações</h2>
+        <p class="section-hint">Use este espaço para anotar ideias, comandos, links ou o que precisar.</p>
+        <textarea class="anotacoes__textarea" id="anotacoes-textarea" placeholder="Digite suas anotações aqui..." rows="16"></textarea>
+        <p class="anotacoes__status" id="anotacoes-status" aria-live="polite"></p>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <p>Seus dados ficam salvos no navegador (localStorage).</p>
+    </footer>
+  </div>
+
+  <script src="auth.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
