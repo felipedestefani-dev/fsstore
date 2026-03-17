@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comércio Exterior 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="topbar__content">
+        <div class="topbar__left">
+          <img class="topbar__logo" src="logo.png" alt="" />
+          <div class="topbar__titles">
+            <span class="topbar__title">Comércio Exterior 1</span>
+            <span class="topbar__subtitle">Noturno</span>
+          </div>
+        </div>
+        <nav class="tabs" aria-label="Abas">
+          <button type="button" class="tabs__btn is-active" data-tab="turma" aria-selected="true">Turma</button>
+          <button type="button" class="tabs__btn" data-tab="rifas" aria-selected="false">Rifas</button>
+          <button type="button" class="tabs__btn" data-tab="camisas" aria-selected="false">Camisas</button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="panel" id="panel-turma">
+      <h1 class="section-title">Turma</h1>
+      <p class="section-hint">Conteúdo da aba Turma.</p>
+    </section>
+
+    <section class="panel is-hidden" id="panel-rifas">
+      <h1 class="section-title">Rifa Oficial Páscoa Comex 1</h1>
+      <p class="section-hint">Garanta seu número e boa sorte.</p>
+
+      <div class="rifa">
+        <img src="rifa.jpeg" alt="Rifa Oficial Páscoa Comex 1" loading="lazy" />
+      </div>
+    </section>
+
+    <section class="panel is-hidden" id="panel-camisas">
+      <h1 class="section-title">Camisa Oficial Comex 1</h1>
+      <p class="section-hint">Modelo oficial da turma.</p>
+
+      <div class="camisa">
+        <img src="camisa.png" alt="Camisa Oficial Comex 1" loading="lazy" />
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
