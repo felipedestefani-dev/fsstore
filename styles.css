@@ -221,6 +221,16 @@ strong {
   margin-top: 0.15rem;
 }
 
+.note {
+  margin-top: 0.85rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.note--center {
+  text-align: center;
+}
+
 .panel__head {
   display: flex;
   align-items: flex-start;
@@ -463,6 +473,10 @@ strong {
 
 #panel-camisas .section-hint {
   margin-bottom: 0.9rem;
+}
+
+#panel-camisas .note {
+  text-align: center;
 }
 
 #panel-rifas .section-title,
