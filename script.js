@@ -1,11 +1,12 @@
 (() => {
   const buttons = Array.from(document.querySelectorAll('.tabs__btn'));
   const panels = {
+    geral: document.getElementById('panel-geral'),
     turma: document.getElementById('panel-turma'),
     rifas: document.getElementById('panel-rifas'),
     camisas: document.getElementById('panel-camisas'),
   };
-  let activeTab = 'turma';
+  let activeTab = 'geral';
 
   function setActive(tab) {
     if (!panels[tab]) return;
@@ -39,6 +40,6 @@
     setActive(tab);
   });
 
-  setActive('turma');
+  setActive('geral');
 })();
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Comércio Exterior 1</title>
+  <title>Comércio Exterior</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -16,12 +16,13 @@
         <div class="topbar__left">
           <img class="topbar__logo" src="logo.png" alt="" />
           <div class="topbar__titles">
-            <span class="topbar__title">Comércio Exterior 1</span>
+            <span class="topbar__title">Comércio Exterior</span>
             <span class="topbar__subtitle">Noturno</span>
           </div>
         </div>
         <nav class="tabs" aria-label="Abas">
-          <button type="button" class="tabs__btn is-active" data-tab="turma" aria-selected="true">Turma</button>
+          <button type="button" class="tabs__btn is-active" data-tab="geral" aria-selected="true">Geral</button>
+          <button type="button" class="tabs__btn" data-tab="turma" aria-selected="false">Turma</button>
           <button type="button" class="tabs__btn" data-tab="rifas" aria-selected="false">Rifas</button>
           <button type="button" class="tabs__btn" data-tab="camisas" aria-selected="false">Camisas</button>
         </nav>
@@ -30,7 +31,9 @@
   </header>
 
   <main class="main">
-    <section class="panel" id="panel-turma">
+    <section class="panel" id="panel-geral"></section>
+
+    <section class="panel is-hidden" id="panel-turma">
       <header class="panel__head">
         <div>
           <h1 class="section-title">Painel da Turma</h1>

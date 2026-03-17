@@ -83,12 +83,14 @@ strong {
 }
 
 .topbar__logo {
-  width: 92px;
-  height: 92px;
+  width: 140px;
+  height: 140px;
   flex: 0 0 auto;
   display: block;
   object-fit: contain;
-  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.35));
+  filter:
+    drop-shadow(0 12px 26px rgba(0, 0, 0, 0.7))
+    drop-shadow(0 0 20px rgba(0, 0, 0, 0.6));
 }
 
 .topbar__titles {
@@ -121,31 +123,36 @@ strong {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.55rem 0;
+  padding: 0.35rem 0;
 }
 
 .tabs__btn {
   border: none;
-  background: rgba(255, 255, 255, 0.12);
-  color: var(--text);
-  font-weight: 700;
-  font-size: 0.95rem;
-  padding: 0.6rem 0.9rem;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  padding: 0.45rem 0.85rem;
   border-radius: 999px;
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
 }
 
 .tabs__btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.95);
   transform: translateY(-1px);
 }
 
 .tabs__btn.is-active {
-  background: #ffffff;
-  color: #111827;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
+  background: rgba(255, 255, 255, 0.20);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 }
 
 .tabs__btn:focus-visible {
@@ -577,8 +584,10 @@ strong {
   }
 
   .tabs__btn {
-    padding: 0.52rem 0.8rem;
-    font-size: 0.92rem;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.78rem;
+    flex: 1 1 46%;
+    text-align: center;
   }
 
   .main {
