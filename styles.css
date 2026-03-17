@@ -312,6 +312,14 @@ strong {
   margin-top: 0.9rem;
 }
 
+.actions--center {
+  justify-content: center;
+}
+
+.actions--center .btn {
+  min-width: 220px;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
