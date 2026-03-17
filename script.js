@@ -1,6 +1,5 @@
 (() => {
   const buttons = Array.from(document.querySelectorAll('.tabs__btn'));
-  const main = document.querySelector('.main');
   const panels = {
     turma: document.getElementById('panel-turma'),
     rifas: document.getElementById('panel-rifas'),
@@ -22,16 +21,22 @@
       if (!el) return;
       el.classList.toggle('is-hidden', key !== tab);
     });
-
-    const current = panels[tab];
-    if (main && current) {
-      // Keep layout stable while panels are absolutely positioned
-      main.style.minHeight = `${current.offsetHeight}px`;
-    }
   }
 
   buttons.forEach((btn) => {
     btn.addEventListener('click', () => setActive(btn.dataset.tab));
+  });
+
+  // Allow internal "Ver Rifa/Camisa" links to switch tabs
+  document.addEventListener('click', (e) => {
+    const a = e.target instanceof Element ? e.target.closest('a[href^="#panel-"]') : null;
+    if (!a) return;
+    const href = a.getAttribute('href');
+    if (!href) return;
+    const tab = href.replace('#panel-', '');
+    if (!panels[tab]) return;
+    e.preventDefault();
+    setActive(tab);
   });
 
   setActive('turma');

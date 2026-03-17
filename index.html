@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body id="topo">
   <header class="topbar">
     <div class="topbar__inner">
       <div class="topbar__content">
@@ -31,8 +31,62 @@
 
   <main class="main">
     <section class="panel" id="panel-turma">
-      <h1 class="section-title">Turma</h1>
-      <p class="section-hint">Conteúdo da aba Turma.</p>
+      <header class="panel__head">
+        <div>
+          <h1 class="section-title">Painel da Turma</h1>
+          <p class="section-hint">Avisos, agenda e links importantes do Comex 1 (Noturno).</p>
+        </div>
+        <div class="badge" aria-label="Ano letivo">2026</div>
+      </header>
+
+      <div class="grid grid--2">
+        <section class="card">
+          <h2 class="card__title">Avisos</h2>
+          <p class="empty">Sem Avisos</p>
+          <div class="actions">
+            <a class="btn btn--soft" href="#panel-rifas">Ver Rifa</a>
+            <a class="btn btn--soft" href="#panel-camisas">Ver Camisa</a>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2 class="card__title">Agenda rápida</h2>
+          <div class="agenda">
+            <div class="agenda__item">
+              <span class="agenda__date">08/04</span>
+              <div class="agenda__meta">
+                <span class="agenda__title">Sorteio da rifa</span>
+                <span class="agenda__desc">Divulgação do resultado.</span>
+              </div>
+            </div>
+            <div class="agenda__item">
+              <span class="agenda__date">—</span>
+              <div class="agenda__meta">
+                <span class="agenda__title">Entrega de camisa</span>
+                <span class="agenda__desc">Sem Prazo</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="grid grid--2">
+        <section class="card card--compact">
+          <h2 class="card__title">Contato</h2>
+          <p class="muted">Para dúvidas gerais, fale com a coordenação ou com os representantes.</p>
+          <div class="actions">
+            <a class="btn btn--primary" href="#panel-turma">Atualizar</a>
+          </div>
+        </section>
+
+        <section class="card card--compact">
+          <h2 class="card__title">Organização</h2>
+          <ul class="list list--compact">
+            <li><strong>Rifa</strong>: acompanhe na aba Rifas.</li>
+            <li><strong>Camisa</strong>: detalhes na aba Camisas.</li>
+          </ul>
+        </section>
+      </div>
     </section>
 
     <section class="panel is-hidden" id="panel-rifas">
@@ -53,6 +107,22 @@
       </div>
     </section>
   </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <p class="footer__text">
+        <strong>Desenvolvedor do site:</strong> <strong>Felipe</strong> •
+        <a class="footer__ig" href="https://instagram.com/off.destefani" target="_blank" rel="noopener noreferrer">
+          <span class="footer__ig-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img" focusable="false" aria-hidden="true">
+              <path fill="currentColor" d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.75-2.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z"/>
+            </svg>
+          </span>
+          <span class="footer__ig-handle">Instagram: off.destefani</span>
+        </a>
+      </p>
+    </div>
+  </footer>
 
   <script src="script.js"></script>
 </body>
