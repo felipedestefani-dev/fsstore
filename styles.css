@@ -198,6 +198,13 @@ strong {
   backdrop-filter: none;
 }
 
+#panel-geral {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
 #panel-rifas {
   background: transparent;
   border: none;
@@ -236,6 +243,35 @@ strong {
 
 .note--center {
   text-align: center;
+}
+
+.note__ig {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 900;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.note__ig:hover {
+  text-decoration: none;
+  opacity: 0.92;
+}
+
+.note__ig-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.note__ig-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 
 .panel__head {
@@ -478,11 +514,24 @@ strong {
   text-align: center;
 }
 
+#panel-geral .section-title,
+#panel-geral .section-hint {
+  text-align: center;
+}
+
 #panel-camisas .section-hint {
   margin-bottom: 0.9rem;
 }
 
+#panel-geral .section-hint {
+  margin-bottom: 0.9rem;
+}
+
 #panel-camisas .note {
+  text-align: center;
+}
+
+#panel-geral .note {
   text-align: center;
 }
 
@@ -529,6 +578,7 @@ strong {
   border-radius: 0;
   background: transparent;
   border: none;
+  position: relative;
 }
 
 .camisa img {
@@ -538,6 +588,9 @@ strong {
   opacity: 0;
   transform: translateY(26px);
   filter:
+    grayscale(1)
+    brightness(0)
+    contrast(1.1)
     drop-shadow(0 28px 22px rgba(0, 0, 0, 0.55))
     drop-shadow(0 8px 30px rgba(220, 38, 38, 0.18));
   transition:
@@ -545,7 +598,23 @@ strong {
     transform 520ms cubic-bezier(0.2, 0.9, 0.2, 1);
 }
 
-#panel-camisas:not(.is-hidden) .camisa img {
+#panel-camisas .camisa::after,
+#panel-geral .camisa::after {
+  content: "?";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: clamp(3rem, 10vw, 5.5rem);
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 18px 40px rgba(0, 0, 0, 0.65);
+  pointer-events: none;
+}
+
+#panel-camisas:not(.is-hidden) .camisa img,
+#panel-geral:not(.is-hidden) .camisa img {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 80ms;
