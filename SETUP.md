@@ -13,7 +13,7 @@ window.FSSTORE_CONFIG = {
 };
 ```
 
-O arquivo `config.js` está no `.gitignore` para não subir chaves no Git.
+Inclua o `config.js` no repositório se o site for publicado em **GitHub Pages / Netlify / etc.** — sem esse arquivo no deploy, o painel Admin mostra “Configure o Supabase…”. A chave **anon** é pública por desenho (a segurança vem do RLS). Não coloque a chave **service_role** no front-end.
 
 ## 2. Banco de dados
 
