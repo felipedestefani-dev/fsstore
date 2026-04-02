@@ -1260,6 +1260,10 @@ strong {
 
   .panel {
     padding: 1.05rem;
+    /* Evita painel preso em opacity:0 se a animação não rodar ao sair de display:none (Safari). */
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 
   #panel-geral,
@@ -1271,12 +1275,22 @@ strong {
     padding: 1.2rem 1rem;
   }
 
-  /* iOS/Safari: backdrop-filter pode impedir toques nos filhos; painel admin usa camada estável */
+  /* iOS/Safari: backdrop-filter pode esconder filhos ou bloquear toques; fundo já é semi-opaco */
+  #panel-geral,
+  #panel-eventos,
+  #panel-trotes,
+  #panel-interclasse,
+  #panel-gebe,
   #panel-admin {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
+  }
+
+  .main .panel:not(.is-hidden) [id^="site-"] {
+    position: relative;
+    z-index: 1;
   }
 
   .admin-dashboard {
