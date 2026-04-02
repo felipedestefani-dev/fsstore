@@ -537,8 +537,21 @@ strong {
 #site-geral,
 #site-eventos,
 #site-trotes,
-#site-interclasse {
+#site-interclasse,
+#site-gebe-items {
   text-align: left;
+}
+
+.site-block__spacer {
+  margin-top: 1.25rem;
+}
+
+#site-gebe-items {
+  margin-top: 1.15rem;
+}
+
+.site-gebe-dynamic .agenda {
+  margin-top: 0.35rem;
 }
 
 .site-block__intro {
@@ -843,6 +856,41 @@ strong {
 
 .btn--soft {
   background: rgba(255, 255, 255, 0.08);
+}
+
+.btn--positive {
+  background: linear-gradient(155deg, #14532d 0%, #15803d 38%, #22c55e 72%, #4ade80 100%);
+  border: 1px solid #86efac;
+  color: #f0fdf4;
+  box-shadow: 0 4px 14px rgba(22, 101, 52, 0.45);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+}
+
+.btn--positive:hover {
+  background: linear-gradient(155deg, #166534 0%, #16a34a 40%, #22c55e 75%, #86efac 100%);
+  border-color: #bbf7d0;
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(22, 101, 52, 0.55);
+}
+
+.btn--negative {
+  background: linear-gradient(155deg, #7f1d1d 0%, #b91c1c 40%, #dc2626 72%, #f87171 100%);
+  border: 1px solid #fca5a5;
+  color: #fef2f2;
+  box-shadow: 0 4px 14px rgba(127, 29, 29, 0.45);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+}
+
+.btn--negative:hover {
+  background: linear-gradient(155deg, #991b1b 0%, #dc2626 42%, #ef4444 78%, #fca5a5 100%);
+  border-color: #fecaca;
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(127, 29, 29, 0.55);
+}
+
+.btn--compact {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.82rem;
 }
 
 .btn:focus-visible {

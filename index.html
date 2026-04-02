@@ -56,6 +56,7 @@
       <h2 class="section-title">G.E.B.E</h2>
       <p class="section-hint">Grupo de Estudos Bíblicos da Escola</p>
       <p class="gebe-meetings"><strong>Encontros:</strong> quartas-feiras (20h às 20h20)</p>
+      <div id="site-gebe-items"></div>
     </section>
     <section class="panel is-hidden admin-panel" id="panel-admin" aria-label="Admin">
       <div class="admin-auth" data-admin-auth>
@@ -91,10 +92,10 @@
             </div>
 
             <div class="admin-tool">
-              <h3 class="admin-tool__title">Agenda e eventos</h3>
-              <p class="admin-tool__desc">Itens com data e título. Em cada linha, escolha em <strong>Mostrar na aba</strong> se o item aparece em <strong>Geral</strong> (agenda) ou em <strong>Eventos</strong>.</p>
+              <h3 class="admin-tool__title">Itens por aba</h3>
+              <p class="admin-tool__desc">Em cada linha, em <strong>Mostrar na aba</strong>, escolha <strong>Geral</strong>, <strong>Eventos</strong>, <strong>Trotes</strong>, <strong>Interclasse</strong> ou <strong>Gebe</strong> (exceto Admin).</p>
               <div id="admin-items-list" class="admin-list"></div>
-              <button type="button" class="btn btn--soft" id="admin-items-add">+ Adicionar item</button>
+              <button type="button" class="btn btn--positive" id="admin-items-add">+ Adicionar item</button>
             </div>
 
             <div class="admin-tool">
@@ -114,12 +115,12 @@
             </div>
 
             <p class="admin-save-row">
-              <button type="button" class="btn btn--primary" id="admin-save-all">Salvar alterações</button>
+              <button type="button" class="btn btn--positive" id="admin-save-all">Salvar alterações</button>
               <span class="admin-auth__msg admin-save-msg" id="admin-save-msg" role="status" aria-live="polite"></span>
             </p>
           </div>
 
-          <button type="button" class="btn btn--soft admin-logout-btn" id="admin-logout">Sair</button>
+          <button type="button" class="btn btn--negative admin-logout-btn" id="admin-logout">Sair</button>
         </div>
       </div>
     </section>

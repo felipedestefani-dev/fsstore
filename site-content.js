@@ -2,12 +2,24 @@ import { supabase } from "./supabase-client.js";
 
 const SITE_ROW_ID = "main";
 
+const TAB_KEYS = ["agenda", "eventos", "trotes", "interclasse", "gebe"];
+const TAB_LABELS = {
+  agenda: "Geral",
+  eventos: "Eventos",
+  trotes: "Trotes",
+  interclasse: "Interclasse",
+  gebe: "Gebe",
+};
+
 function defaultContent() {
   return {
     v: 1,
     geralIntro: "",
     agenda: [],
     eventos: [],
+    trotesItems: [],
+    interclasseItems: [],
+    gebeItems: [],
     trotes: "",
     interclasse: "",
   };
@@ -20,6 +32,9 @@ function normalizePayload(o) {
     ...o,
     agenda: Array.isArray(o.agenda) ? o.agenda : [],
     eventos: Array.isArray(o.eventos) ? o.eventos : [],
+    trotesItems: Array.isArray(o.trotesItems) ? o.trotesItems : [],
+    interclasseItems: Array.isArray(o.interclasseItems) ? o.interclasseItems : [],
+    gebeItems: Array.isArray(o.gebeItems) ? o.gebeItems : [],
   };
 }
 
@@ -107,10 +122,10 @@ function renderGeral(c) {
   const intro = c.geralIntro.trim();
   const hasAgenda = Array.isArray(c.agenda) && c.agenda.length > 0;
   if (!intro && !hasAgenda) {
-      root.innerHTML = emptyBlock(
-        "Geral",
-        "Informações gerais da turma aparecerão aqui em breve."
-      );
+    root.innerHTML = emptyBlock(
+      "Geral",
+      "Informações gerais da turma aparecerão aqui em breve."
+    );
     return;
   }
   let html = "";
@@ -129,37 +144,75 @@ function renderEventos(c) {
   if (!root) return;
   const items = Array.isArray(c.eventos) ? c.eventos : [];
   if (items.length === 0) {
-      root.innerHTML = emptyBlock(
-        "Eventos",
-        "Calendário e avisos de eventos serão publicados aqui."
-      );
+    root.innerHTML = emptyBlock(
+      "Eventos",
+      "Calendário e avisos de eventos serão publicados aqui."
+    );
     return;
   }
   root.innerHTML = '<h3 class="site-block__heading">Próximos eventos</h3>' + agendaBlock(items);
 }
 
-function renderTextPanel(rootId, title, emptyHint, text) {
-  const root = document.getElementById(rootId);
+function renderTrotesPanel(c) {
+  const root = document.getElementById("site-trotes");
   if (!root) return;
-  const t = String(text || "").trim();
-  if (!t) {
-    root.innerHTML = emptyBlock(title, emptyHint);
+  const items = Array.isArray(c.trotesItems) ? c.trotesItems : [];
+  const text = String(c.trotes || "").trim();
+  if (items.length === 0 && !text) {
+    root.innerHTML = emptyBlock("Trotes", "Conteúdo da aba Trotes em breve.");
     return;
   }
-  root.innerHTML = '<div class="site-block__text">' + escapeHtml(t).replace(/\n/g, "<br>") + "</div>";
+  let html = "";
+  if (items.length > 0) html += agendaBlock(items);
+  if (text) {
+    html +=
+      (items.length ? '<div class="site-block__spacer"></div>' : "") +
+      '<div class="site-block__text">' +
+      escapeHtml(text).replace(/\n/g, "<br>") +
+      "</div>";
+  }
+  root.innerHTML = html;
+}
+
+function renderInterclassePanel(c) {
+  const root = document.getElementById("site-interclasse");
+  if (!root) return;
+  const items = Array.isArray(c.interclasseItems) ? c.interclasseItems : [];
+  const text = String(c.interclasse || "").trim();
+  if (items.length === 0 && !text) {
+    root.innerHTML = emptyBlock("Interclasse", "Notícias do interclasse em breve.");
+    return;
+  }
+  let html = "";
+  if (items.length > 0) html += agendaBlock(items);
+  if (text) {
+    html +=
+      (items.length ? '<div class="site-block__spacer"></div>' : "") +
+      '<div class="site-block__text">' +
+      escapeHtml(text).replace(/\n/g, "<br>") +
+      "</div>";
+  }
+  root.innerHTML = html;
+}
+
+function renderGebePanel(c) {
+  const root = document.getElementById("site-gebe-items");
+  if (!root) return;
+  const items = Array.isArray(c.gebeItems) ? c.gebeItems : [];
+  if (items.length === 0) {
+    root.innerHTML = "";
+    return;
+  }
+  root.innerHTML = '<div class="site-gebe-dynamic">' + agendaBlock(items) + "</div>";
 }
 
 async function renderPublic() {
   const c = await load();
   renderGeral(c);
   renderEventos(c);
-  renderTextPanel("site-trotes", "Trotes", "Conteúdo da aba Trotes em breve.", c.trotes);
-  renderTextPanel(
-    "site-interclasse",
-    "Interclasse",
-    "Notícias do interclasse em breve.",
-    c.interclasse
-  );
+  renderTrotesPanel(c);
+  renderInterclassePanel(c);
+  renderGebePanel(c);
 }
 
 function buildRow(item) {
@@ -175,13 +228,13 @@ function buildRow(item) {
   const sel = document.createElement("select");
   sel.className = "admin-item-target";
   sel.setAttribute("aria-label", "Mostrar na aba");
-  [["agenda", "Geral (agenda)"], ["eventos", "Eventos"]].forEach(([value, label]) => {
+  TAB_KEYS.forEach((key) => {
     const opt = document.createElement("option");
-    opt.value = value;
-    opt.textContent = label;
+    opt.value = key;
+    opt.textContent = TAB_LABELS[key];
     sel.appendChild(opt);
   });
-  sel.value = item.tab === "eventos" ? "eventos" : "agenda";
+  sel.value = TAB_KEYS.includes(item.tab) ? item.tab : "agenda";
   tabSel.appendChild(tabLabel);
   tabSel.appendChild(sel);
 
@@ -215,7 +268,7 @@ function buildRow(item) {
 
   const rm = document.createElement("button");
   rm.type = "button";
-  rm.className = "btn btn--soft admin-row__remove";
+  rm.className = "btn btn--negative btn--compact admin-row__remove";
   rm.textContent = "Remover";
 
   rm.addEventListener("click", () => wrap.remove());
@@ -245,14 +298,22 @@ function mountList(containerId, items) {
 function mergedItemsForMount(c) {
   const agenda = (c.agenda || []).map((i) => ({ ...i, tab: "agenda" }));
   const eventos = (c.eventos || []).map((i) => ({ ...i, tab: "eventos" }));
-  return [...agenda, ...eventos];
+  const trotes = (c.trotesItems || []).map((i) => ({ ...i, tab: "trotes" }));
+  const interclasse = (c.interclasseItems || []).map((i) => ({ ...i, tab: "interclasse" }));
+  const gebe = (c.gebeItems || []).map((i) => ({ ...i, tab: "gebe" }));
+  return [...agenda, ...eventos, ...trotes, ...interclasse, ...gebe];
 }
 
 function collectItemsSplit() {
   const el = document.getElementById("admin-items-list");
-  if (!el) return { agenda: [], eventos: [] };
+  if (!el) {
+    return { agenda: [], eventos: [], trotesItems: [], interclasseItems: [], gebeItems: [] };
+  }
   const agenda = [];
   const eventos = [];
+  const trotesItems = [];
+  const interclasseItems = [];
+  const gebeItems = [];
   Array.from(el.querySelectorAll(".admin-row")).forEach((row) => {
     const target = row.querySelector("select.admin-item-target") || row.querySelector("select");
     const raw = target && target.value ? String(target.value).trim().toLowerCase() : "agenda";
@@ -267,9 +328,12 @@ function collectItemsSplit() {
     };
     if (!item.title && !item.date && !item.desc) return;
     if (raw === "eventos") eventos.push(item);
+    else if (raw === "trotes") trotesItems.push(item);
+    else if (raw === "interclasse") interclasseItems.push(item);
+    else if (raw === "gebe") gebeItems.push(item);
     else agenda.push(item);
   });
-  return { agenda, eventos };
+  return { agenda, eventos, trotesItems, interclasseItems, gebeItems };
 }
 
 async function collectForm() {
@@ -283,6 +347,9 @@ async function collectForm() {
   const split = collectItemsSplit();
   c.agenda = split.agenda;
   c.eventos = split.eventos;
+  c.trotesItems = split.trotesItems;
+  c.interclasseItems = split.interclasseItems;
+  c.gebeItems = split.gebeItems;
   return c;
 }
 
