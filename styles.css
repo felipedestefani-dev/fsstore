@@ -1196,7 +1196,7 @@ strong {
 @media (max-width: 720px) {
   .topbar__content {
     grid-template-columns: 1fr;
-    padding: 1.85rem 1rem 2rem 1.35rem;
+    padding: 1.85rem 1rem 2rem;
   }
 
   .topbar__spacer {
@@ -1206,6 +1206,7 @@ strong {
   .topbar__left {
     grid-column: 1;
     justify-self: center;
+    justify-content: center;
     min-width: 100%;
     margin-left: 0;
     padding: 0 0 0.5rem;
@@ -1222,6 +1223,8 @@ strong {
     align-items: center;
     text-align: center;
     max-width: 100%;
+    width: 100%;
+    margin-inline: auto;
   }
 
   .topbar__title {

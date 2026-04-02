@@ -124,7 +124,7 @@ function renderGeral(c) {
   let html = "";
   html +=
     '<div class="geral-hero">' +
-    '<h2 class="geral-welcome">Bem Vindo ao site do Etec Noturno!</h2>' +
+    '<h2 class="geral-welcome">Bem vindo ao site oficial do Etec Noturno!</h2>' +
     '<img class="geral-hero__img" src="foto-etec.jpeg" alt="Etec Noturno" loading="lazy" decoding="async" />' +
     "</div>";
   if (intro) {
