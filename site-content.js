@@ -154,6 +154,23 @@ function parseItemDateRange(item) {
     if (start > end) return { start: end, end: start, display: s };
     return { start, end, display: s };
   }
+  /* de 29/06 até 03/07 (sem ano: ano corrente; atravessa ano se o fim for antes do início no mesmo ano) */
+  const rangeShort = /de\s+(\d{1,2})\/(\d{1,2})\s+até\s+(\d{1,2})\/(\d{1,2})\b/i.exec(s);
+  if (rangeShort) {
+    const d1 = +rangeShort[1];
+    const m1 = +rangeShort[2];
+    const d2 = +rangeShort[3];
+    const m2 = +rangeShort[4];
+    if (m1 >= 1 && m1 <= 12 && m2 >= 1 && m2 <= 12 && d1 >= 1 && d1 <= 31 && d2 >= 1 && d2 <= 31) {
+      const y = new Date().getFullYear();
+      const start = new Date(y, m1 - 1, d1, 12, 0, 0);
+      let end = new Date(y, m2 - 1, d2, 12, 0, 0);
+      if (end < start) {
+        end = new Date(y + 1, m2 - 1, d2, 12, 0, 0);
+      }
+      return { start, end, display: s };
+    }
+  }
   const br = /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/.exec(s);
   if (br) {
     let y = +br[3];
@@ -609,11 +626,16 @@ function buildRow(item) {
       const p = diCal.value.split("-").map(Number);
       if (p.length === 3) di.value = `${pad2(p[2])}/${pad2(p[1])}/${p[0]}`;
     }
-    di.style.display = isCal ? "none" : "";
+    di.style.display = "";
     diCal.style.display = isCal ? "" : "none";
-    dHint.textContent = isCal
-      ? "Escolha o dia em que o evento aparece na aba Calendário."
-      : "Dia único ou período (ex.: de 20/03 até 03/07)";
+    if (isCal) {
+      di.placeholder = "Um dia (15/04/2026) ou período: de 29/06 até 03/07";
+      dHint.textContent =
+        "Seletor = um dia. Para vários dias, digite no texto (ex.: de 29/06 até 03/07) — todos ficam verdes na grade.";
+    } else {
+      di.placeholder = "ex.: 15/04 ou de 20/03 até 03/07";
+      dHint.textContent = "Dia único ou período (ex.: de 20/03 até 03/07)";
+    }
     if (isCal && !diCal.value && di.value.trim()) {
       const parsed = tryTextDateToIso(di.value);
       if (parsed) diCal.value = parsed;
@@ -704,7 +726,9 @@ function collectItemsSplit() {
     const desc = row.querySelector('[data-field="desc"]');
     let dateStr = "";
     if (raw === "calendario") {
-      dateStr = (dateCal && dateCal.value ? dateCal.value.trim() : "") || (date ? date.value.trim() : "");
+      const text = date ? date.value.trim() : "";
+      const iso = dateCal && dateCal.value ? dateCal.value.trim() : "";
+      dateStr = text || iso;
     } else {
       dateStr = date ? date.value.trim() : "";
     }
