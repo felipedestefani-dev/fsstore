@@ -1,4 +1,4 @@
-import { supabase } from "./supabase-client.js";
+import { getSupabase } from "./supabase-client.js";
 
 const guestEl = document.getElementById("admin-guest");
 const sessionEl = document.getElementById("admin-session");
@@ -35,9 +35,10 @@ function applyLoggedOutUi() {
   emit("fsstore-admin-logout");
 }
 
-function init() {
+async function init() {
   if (!guestEl || !sessionEl || !form) return;
 
+  const supabase = await getSupabase();
   if (!supabase) {
     setMsg(
       msgEl,
@@ -82,7 +83,7 @@ function init() {
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", init);
+  document.addEventListener("DOMContentLoaded", () => void init());
 } else {
-  init();
+  void init();
 }

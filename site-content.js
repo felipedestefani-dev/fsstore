@@ -1,4 +1,4 @@
-import { supabase } from "./supabase-client.js";
+import { getSupabase } from "./supabase-client.js";
 
 const SITE_ROW_ID = "main";
 
@@ -39,6 +39,7 @@ function normalizePayload(o) {
 }
 
 async function load() {
+  const supabase = await getSupabase();
   if (!supabase) return defaultContent();
   const { data, error } = await supabase.from("site_content").select("payload").eq("id", SITE_ROW_ID).maybeSingle();
   if (error) {
@@ -50,6 +51,7 @@ async function load() {
 }
 
 async function saveRemote(data) {
+  const supabase = await getSupabase();
   if (!supabase) throw new Error("Supabase não configurado.");
   const { error } = await supabase.from("site_content").upsert(
     {
@@ -63,6 +65,7 @@ async function saveRemote(data) {
 }
 
 async function getSession() {
+  const supabase = await getSupabase();
   if (!supabase) return null;
   const { data } = await supabase.auth.getSession();
   return data.session ?? null;
@@ -387,7 +390,7 @@ async function initAdminDashboard() {
     saveBtn.dataset.bound = "1";
     saveBtn.addEventListener("click", async () => {
       try {
-        if (!supabase) {
+        if (!(await getSupabase())) {
           setSaveMsg("Supabase não configurado.", true);
           return;
         }
@@ -406,7 +409,17 @@ async function initAdminDashboard() {
 }
 
 async function boot() {
-  await renderPublic();
+  try {
+    await renderPublic();
+  } catch (err) {
+    console.error("fsstore boot:", err);
+    const c = defaultContent();
+    renderGeral(c);
+    renderEventos(c);
+    renderTrotesPanel(c);
+    renderInterclassePanel(c);
+    renderGebePanel(c);
+  }
   window.addEventListener("fsstore-admin-login", () => initAdminDashboard());
   window.addEventListener("fsstore-admin-logout", () => setSaveMsg("", false));
   if (await getSession()) await initAdminDashboard();

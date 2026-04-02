@@ -308,6 +308,9 @@ strong {
   max-width: var(--content-max);
   margin: 0 auto;
   padding: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 2.5vw, 1.5rem) clamp(2rem, 4vw, 3rem);
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
 }
 
 .panel {
@@ -1305,8 +1308,6 @@ strong {
   #panel-admin {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
   }
 
   .main .panel:not(.is-hidden) [id^="site-"] {

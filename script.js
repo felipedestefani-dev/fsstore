@@ -24,6 +24,11 @@
       if (!el) return;
       el.classList.toggle('is-hidden', key !== tab);
     });
+
+    requestAnimationFrame(() => {
+      const el = panels[tab];
+      if (el) void el.offsetHeight;
+    });
   }
 
   buttons.forEach((btn) => {
