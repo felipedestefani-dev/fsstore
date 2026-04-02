@@ -210,6 +210,43 @@ strong {
   box-sizing: border-box;
 }
 
+.topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.65rem, 1.8vw, 1.1rem);
+  min-width: 0;
+}
+
+.topbar__logo-wrap {
+  width: clamp(92px, 20vw, 132px);
+  height: clamp(92px, 20vw, 132px);
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+.topbar__logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  padding: 0;
+  box-sizing: border-box;
+  border: none;
+  box-shadow: none;
+  transform: scale(1.72);
+  transform-origin: center center;
+}
+
 .topbar__spacer {
   grid-column: 3;
   min-width: 0;
@@ -219,11 +256,13 @@ strong {
 .topbar__titles {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: flex-start;
   gap: 0.35rem;
   line-height: 1.15;
   width: fit-content;
   max-width: min(100%, 28rem);
+  min-width: 0;
+  text-align: left;
 }
 
 .topbar__title,
@@ -248,9 +287,10 @@ strong {
   font-size: clamp(1.2rem, 2.6vw, 1.85rem);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  text-align: center;
+  text-align: left;
   display: block;
-  width: 100%;
+  width: auto;
+  align-self: flex-start;
 }
 
 .tabs {
@@ -1256,6 +1296,11 @@ strong {
     gap: 0.6rem;
   }
 
+  .topbar__brand {
+    justify-content: center;
+    max-width: 100%;
+  }
+
   .tabs {
     grid-column: 1;
     justify-self: center;
@@ -1278,6 +1323,8 @@ strong {
   .topbar__subtitle {
     font-size: clamp(1.1rem, 5vw, 1.5rem);
     text-align: center;
+    align-self: center;
+    width: 100%;
   }
 
   .tabs {
