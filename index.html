@@ -3,139 +3,125 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Comércio Exterior</title>
+  <title>Etec Ferrucio Humberto Gazzetta</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&family=Outfit:wght@500;600&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="styles.css" />
+  <script>
+    window.FSSTORE_CONFIG = { supabaseUrl: "", supabaseAnonKey: "" };
+  </script>
+  <script src="config.js"></script>
 </head>
 <body id="topo">
   <header class="topbar">
     <div class="topbar__inner">
       <div class="topbar__content">
         <div class="topbar__left">
-          <img class="topbar__logo" src="logo.png" alt="" />
           <div class="topbar__titles">
-            <span class="topbar__title">Comércio Exterior</span>
+            <span class="topbar__title">Etec Ferrucio Humberto Gazzetta</span>
             <span class="topbar__subtitle">Noturno</span>
           </div>
         </div>
         <nav class="tabs" aria-label="Abas">
           <button type="button" class="tabs__btn is-active" data-tab="geral" aria-selected="true">Geral</button>
-          <button type="button" class="tabs__btn" data-tab="turma" aria-selected="false">Turma</button>
-          <button type="button" class="tabs__btn" data-tab="rifas" aria-selected="false">Rifas</button>
-          <button type="button" class="tabs__btn" data-tab="camisas" aria-selected="false">Camisas</button>
+          <button type="button" class="tabs__btn" data-tab="eventos" aria-selected="false">Eventos</button>
+          <button type="button" class="tabs__btn" data-tab="trotes" aria-selected="false">Trotes</button>
+          <button type="button" class="tabs__btn" data-tab="interclasse" aria-selected="false">Interclasse</button>
+          <button type="button" class="tabs__btn" data-tab="gebe" aria-selected="false">Gebe</button>
+          <button type="button" class="tabs__btn" data-tab="admin" aria-selected="false">Admin</button>
         </nav>
+        <div class="topbar__spacer" aria-hidden="true"></div>
       </div>
     </div>
   </header>
 
   <main class="main">
-    <section class="panel" id="panel-geral">
-      <h1 class="section-title">MODELO NOVO VINDO AÍ!</h1>
-      <p class="section-hint">Prévia do próximo modelo de camisa.</p>
-
-      <div class="camisa">
-        <img src="camisa.png" alt="Modelo novo vindo aí" loading="lazy" />
-      </div>
-
-      <p class="note note--center">
-        Design por: <strong>Ricky</strong> •
-        <a class="note__ig" href="https://instagram.com/dsn.ricky" target="_blank" rel="noopener noreferrer">
-          <span class="note__ig-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false" aria-hidden="true">
-              <path fill="currentColor" d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.75-2.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z"/>
-            </svg>
-          </span>
-          <span class="note__ig-handle">Instagram: dsn.ricky</span>
-        </a>
-      </p>
+    <section class="panel" id="panel-geral" aria-label="Geral">
+      <div id="site-geral"></div>
     </section>
-
-    <section class="panel is-hidden" id="panel-turma">
-      <header class="panel__head">
-        <div>
-          <h1 class="section-title">Painel da Turma</h1>
-          <p class="section-hint">Agenda e contato do Comex (Noturno).</p>
+    <section class="panel is-hidden" id="panel-eventos" aria-label="Eventos">
+      <div id="site-eventos"></div>
+    </section>
+    <section class="panel is-hidden" id="panel-trotes" aria-label="Trotes">
+      <div id="site-trotes"></div>
+    </section>
+    <section class="panel is-hidden" id="panel-interclasse" aria-label="Interclasse">
+      <div id="site-interclasse"></div>
+    </section>
+    <section class="panel is-hidden" id="panel-gebe" aria-label="Gebe">
+      <h2 class="section-title">G.E.B.E</h2>
+      <p class="section-hint">Grupo de Estudos Bíblicos da Escola</p>
+      <p class="gebe-meetings"><strong>Encontros:</strong> quartas-feiras (20h às 20h20)</p>
+    </section>
+    <section class="panel is-hidden admin-panel" id="panel-admin" aria-label="Admin">
+      <div class="admin-auth" data-admin-auth>
+        <div class="admin-auth__guest" id="admin-guest">
+          <h2 class="section-title">Área administrativa</h2>
+          <p class="section-hint">Acesso restrito. Use o <strong>e-mail</strong> e a <strong>senha</strong> do usuário criado no Supabase (Authentication).</p>
+          <form class="admin-login" id="admin-login-form" autocomplete="on">
+            <label class="admin-field">
+              <span class="admin-field__label">E-mail</span>
+              <input type="email" name="email" id="admin-email" required autocomplete="username" placeholder="seu@email.com" />
+            </label>
+            <label class="admin-field">
+              <span class="admin-field__label">Senha</span>
+              <input type="password" name="password" id="admin-password" required autocomplete="current-password" />
+            </label>
+            <p class="admin-auth__msg" id="admin-auth-msg" role="status" aria-live="polite"></p>
+            <button type="submit" class="btn btn--primary" id="admin-login-submit">Entrar</button>
+          </form>
         </div>
-        <div class="badge" aria-label="Ano letivo">2026</div>
-      </header>
+        <div class="admin-auth__session is-hidden" id="admin-session">
+          <h2 class="section-title">Painel admin</h2>
+          <p class="section-hint admin-session__hint">Edite o conteúdo abaixo e clique em <strong>Salvar alterações</strong>. As alterações ficam no Supabase e aparecem para <strong>todos os visitantes</strong>.</p>
+          <p class="admin-auth__user" id="admin-user-email"></p>
 
-      <div class="grid grid--2">
-        <section class="card">
-          <h2 class="card__title">Agenda</h2>
-          <div class="agenda">
-            <div class="agenda__item">
-              <span class="agenda__date">08/04</span>
-              <div class="agenda__meta">
-                <span class="agenda__title">Sorteio da rifa</span>
-                <span class="agenda__desc">Divulgação do resultado.</span>
-              </div>
+          <div class="admin-dashboard" id="admin-dashboard" aria-label="Ferramentas de edição">
+            <div class="admin-tool">
+              <h3 class="admin-tool__title">Texto da aba Geral</h3>
+              <p class="admin-tool__desc">Aparece no topo da aba Geral, antes da agenda.</p>
+              <label class="admin-field">
+                <span class="admin-field__label">Introdução</span>
+                <textarea id="admin-geral-intro" rows="4" placeholder="Texto livre para avisos gerais…"></textarea>
+              </label>
             </div>
-            <div class="agenda__item">
-              <span class="agenda__date">—</span>
-              <div class="agenda__meta">
-                <span class="agenda__title">Entrega de camisa</span>
-                <span class="agenda__desc">Sem Prazo</span>
-              </div>
+
+            <div class="admin-tool">
+              <h3 class="admin-tool__title">Agenda e eventos</h3>
+              <p class="admin-tool__desc">Itens com data e título. Em cada linha, escolha em <strong>Mostrar na aba</strong> se o item aparece em <strong>Geral</strong> (agenda) ou em <strong>Eventos</strong>.</p>
+              <div id="admin-items-list" class="admin-list"></div>
+              <button type="button" class="btn btn--soft" id="admin-items-add">+ Adicionar item</button>
             </div>
+
+            <div class="admin-tool">
+              <h3 class="admin-tool__title">Trotes</h3>
+              <label class="admin-field">
+                <span class="admin-field__label">Texto da aba Trotes</span>
+                <textarea id="admin-trotes" rows="5" placeholder="Conteúdo da aba Trotes…"></textarea>
+              </label>
+            </div>
+
+            <div class="admin-tool">
+              <h3 class="admin-tool__title">Interclasse</h3>
+              <label class="admin-field">
+                <span class="admin-field__label">Texto da aba Interclasse</span>
+                <textarea id="admin-interclasse" rows="5" placeholder="Notícias e jogos…"></textarea>
+              </label>
+            </div>
+
+            <p class="admin-save-row">
+              <button type="button" class="btn btn--primary" id="admin-save-all">Salvar alterações</button>
+              <span class="admin-auth__msg admin-save-msg" id="admin-save-msg" role="status" aria-live="polite"></span>
+            </p>
           </div>
-        </section>
 
-        <section class="card card--compact">
-          <h2 class="card__title">Contato</h2>
-          <p class="muted">Para dúvidas gerais, fale com a coordenação ou com os representantes.</p>
-        </section>
+          <button type="button" class="btn btn--soft admin-logout-btn" id="admin-logout">Sair</button>
+        </div>
       </div>
-    </section>
-
-    <section class="panel is-hidden" id="panel-rifas">
-      <h1 class="section-title">Rifa Oficial Páscoa Comex 1</h1>
-      <p class="section-hint">Garanta seu número e boa sorte.</p>
-
-      <div class="rifa">
-        <img src="rifa.jpeg" alt="Rifa Oficial Páscoa Comex 1" loading="lazy" />
-      </div>
-
-      <div class="actions actions--center">
-        <a
-          class="btn btn--primary"
-          href="https://wa.me/5519993158350?text=Oi!%20Quero%20comprar%20um%20n%C3%BAmero%20da%20Rifa%20Oficial%20P%C3%A1scoa%20Comex%201."
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Comprar agora
-        </a>
-        <a
-          class="btn btn--soft"
-          href="https://wa.me/5519993158350"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          WhatsApp: (19) 99315-8350
-        </a>
-      </div>
-    </section>
-
-    <section class="panel is-hidden" id="panel-camisas">
-      <h1 class="section-title">MODELO NOVO VINDO AÍ!</h1>
-      <p class="section-hint">Prévia do próximo modelo de camisa.</p>
-
-      <div class="camisa">
-        <img src="camisa.png" alt="Modelo novo vindo aí" loading="lazy" />
-      </div>
-
-      <p class="note note--center">
-        Design por: <strong>Ricky</strong> •
-        <a class="note__ig" href="https://instagram.com/dsn.ricky" target="_blank" rel="noopener noreferrer">
-          <span class="note__ig-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img" focusable="false" aria-hidden="true">
-              <path fill="currentColor" d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.75-2.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z"/>
-            </svg>
-          </span>
-          <span class="note__ig-handle">Instagram: dsn.ricky</span>
-        </a>
-      </p>
     </section>
   </main>
 
@@ -156,5 +142,7 @@
   </footer>
 
   <script src="script.js"></script>
+  <script type="module" src="admin-auth.js"></script>
+  <script type="module" src="site-content.js"></script>
 </body>
 </html>

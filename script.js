@@ -2,9 +2,11 @@
   const buttons = Array.from(document.querySelectorAll('.tabs__btn'));
   const panels = {
     geral: document.getElementById('panel-geral'),
-    turma: document.getElementById('panel-turma'),
-    rifas: document.getElementById('panel-rifas'),
-    camisas: document.getElementById('panel-camisas'),
+    eventos: document.getElementById('panel-eventos'),
+    trotes: document.getElementById('panel-trotes'),
+    interclasse: document.getElementById('panel-interclasse'),
+    gebe: document.getElementById('panel-gebe'),
+    admin: document.getElementById('panel-admin'),
   };
   let activeTab = 'geral';
 
@@ -28,7 +30,7 @@
     btn.addEventListener('click', () => setActive(btn.dataset.tab));
   });
 
-  // Allow internal "Ver Rifa/Camisa" links to switch tabs
+  // Links internos #panel-* trocam de aba
   document.addEventListener('click', (e) => {
     const a = e.target instanceof Element ? e.target.closest('a[href^="#panel-"]') : null;
     if (!a) return;
