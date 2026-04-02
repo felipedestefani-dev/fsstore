@@ -246,12 +246,23 @@ function buildRow(item) {
 
   const d = document.createElement("label");
   d.className = "admin-field admin-field--inline";
-  d.innerHTML = '<span class="admin-field__label">Data</span>';
+  const dLab = document.createElement("span");
+  dLab.className = "admin-field__label";
+  dLab.textContent = "Data";
+  const dHint = document.createElement("span");
+  dHint.className = "admin-field__sublabel";
+  dHint.textContent = "Dia único ou período (ex.: de 20/03 até 03/07)";
   const di = document.createElement("input");
   di.type = "text";
   di.dataset.field = "date";
-  di.placeholder = "ex.: 15/04";
+  di.placeholder = "ex.: 15/04 ou de 20/03 até 03/07";
+  di.setAttribute(
+    "aria-label",
+    "Data: dia único ou período, por exemplo de 20/03 até 03/07"
+  );
   di.value = item.date || "";
+  d.appendChild(dLab);
+  d.appendChild(dHint);
   d.appendChild(di);
 
   const t = document.createElement("label");
