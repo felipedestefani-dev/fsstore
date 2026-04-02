@@ -121,20 +121,22 @@ function renderGeral(c) {
   if (!root) return;
   const intro = c.geralIntro.trim();
   const hasAgenda = Array.isArray(c.agenda) && c.agenda.length > 0;
-  if (!intro && !hasAgenda) {
-    root.innerHTML = emptyBlock(
-      "Geral",
-      "Informações gerais da turma aparecerão aqui em breve."
-    );
-    return;
-  }
   let html = "";
+  html +=
+    '<div class="geral-hero">' +
+    '<h2 class="geral-welcome">Bem Vindo ao site do Etec Noturno!</h2>' +
+    '<img class="geral-hero__img" src="foto-etec.jpeg" alt="Etec Noturno" loading="lazy" decoding="async" />' +
+    "</div>";
   if (intro) {
     html += '<p class="site-block__intro">' + escapeHtml(intro).replace(/\n/g, "<br>") + "</p>";
   }
   if (hasAgenda) {
     html += '<h3 class="site-block__heading">Agenda</h3>';
     html += agendaBlock(c.agenda);
+  }
+  if (!intro && !hasAgenda) {
+    html +=
+      '<p class="geral-hero__hint">Informações gerais da escola aparecerão aqui em breve.</p>';
   }
   root.innerHTML = html;
 }
