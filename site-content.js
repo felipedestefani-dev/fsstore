@@ -107,10 +107,10 @@ function renderGeral(c) {
   const intro = c.geralIntro.trim();
   const hasAgenda = Array.isArray(c.agenda) && c.agenda.length > 0;
   if (!intro && !hasAgenda) {
-    root.innerHTML = emptyBlock(
-      "Geral",
-      "Informações gerais da turma aparecerão aqui em breve — ou edite na aba Admin."
-    );
+      root.innerHTML = emptyBlock(
+        "Geral",
+        "Informações gerais da turma aparecerão aqui em breve."
+      );
     return;
   }
   let html = "";
@@ -129,10 +129,10 @@ function renderEventos(c) {
   if (!root) return;
   const items = Array.isArray(c.eventos) ? c.eventos : [];
   if (items.length === 0) {
-    root.innerHTML = emptyBlock(
-      "Eventos",
-      "Calendário e avisos de eventos — cadastre itens na aba Admin."
-    );
+      root.innerHTML = emptyBlock(
+        "Eventos",
+        "Calendário e avisos de eventos serão publicados aqui."
+      );
     return;
   }
   root.innerHTML = '<h3 class="site-block__heading">Próximos eventos</h3>' + agendaBlock(items);
@@ -153,11 +153,11 @@ async function renderPublic() {
   const c = await load();
   renderGeral(c);
   renderEventos(c);
-  renderTextPanel("site-trotes", "Trotes", "Conteúdo da aba Trotes — edite na área Admin.", c.trotes);
+  renderTextPanel("site-trotes", "Trotes", "Conteúdo da aba Trotes em breve.", c.trotes);
   renderTextPanel(
     "site-interclasse",
     "Interclasse",
-    "Notícias do interclasse — edite na área Admin.",
+    "Notícias do interclasse em breve.",
     c.interclasse
   );
 }
