@@ -3,6 +3,7 @@
   const panels = {
     geral: document.getElementById('panel-geral'),
     eventos: document.getElementById('panel-eventos'),
+    calendario: document.getElementById('panel-calendario'),
     trotes: document.getElementById('panel-trotes'),
     interclasse: document.getElementById('panel-interclasse'),
     gebe: document.getElementById('panel-gebe'),

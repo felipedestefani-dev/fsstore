@@ -41,6 +41,7 @@
         <nav class="tabs" aria-label="Abas">
           <button type="button" class="tabs__btn is-active" data-tab="geral" aria-selected="true">Geral</button>
           <button type="button" class="tabs__btn" data-tab="eventos" aria-selected="false">Eventos</button>
+          <button type="button" class="tabs__btn" data-tab="calendario" aria-selected="false">Calendário</button>
           <button type="button" class="tabs__btn" data-tab="trotes" aria-selected="false">Trotes</button>
           <button type="button" class="tabs__btn" data-tab="interclasse" aria-selected="false">Interclasse</button>
           <button type="button" class="tabs__btn" data-tab="gebe" aria-selected="false">Gebe</button>
@@ -57,6 +58,11 @@
     </section>
     <section class="panel is-hidden" id="panel-eventos" aria-label="Eventos">
       <div id="site-eventos"></div>
+    </section>
+    <section class="panel is-hidden" id="panel-calendario" aria-label="Calendário">
+      <h2 class="section-title">Calendário</h2>
+      <p class="section-hint">A grade mostra o mês atual; clique em um dia para ver eventos. Itens da aba <strong>Eventos</strong> (com data) também aparecem aqui.</p>
+      <div id="site-calendario"></div>
     </section>
     <section class="panel is-hidden" id="panel-trotes" aria-label="Trotes">
       <div id="site-trotes"></div>
@@ -110,7 +116,7 @@
 
             <div class="admin-tool">
               <h3 class="admin-tool__title">Itens por aba</h3>
-              <p class="admin-tool__desc">Em cada linha, em <strong>Mostrar na aba</strong>, escolha <strong>Geral</strong>, <strong>Eventos</strong>, <strong>Trotes</strong>, <strong>Interclasse</strong> ou <strong>Gebe</strong> (exceto Admin).</p>
+              <p class="admin-tool__desc">Em cada linha, em <strong>Mostrar na aba</strong>, escolha <strong>Geral</strong>, <strong>Eventos</strong>, <strong>Calendário</strong>, <strong>Trotes</strong>, <strong>Interclasse</strong> ou <strong>Gebe</strong> (exceto Admin). Na aba Calendário, use o <strong>seletor de data</strong>: o evento aparece na grade na data escolhida.</p>
               <div id="admin-items-list" class="admin-list"></div>
               <button type="button" class="btn btn--positive" id="admin-items-add">+ Adicionar item</button>
             </div>
