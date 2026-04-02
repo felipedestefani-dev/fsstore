@@ -121,10 +121,15 @@ function renderGeral(c) {
   if (!root) return;
   const intro = c.geralIntro.trim();
   const hasAgenda = Array.isArray(c.agenda) && c.agenda.length > 0;
+  const geralLead =
+    "Este site foi desenvolvido por alunos do período noturno da Etec Ferrucio Humberto Gazzetta, com a finalidade de divulgar informações institucionais e atividades escolares, tais como eventos, trotes, interclasses, entre outras iniciativas promovidas pela escola.";
   let html = "";
   html +=
     '<div class="geral-hero">' +
-    '<h2 class="geral-welcome">Bem vindo ao site oficial do Etec Noturno!</h2>' +
+    '<h2 class="geral-welcome">Bem vindo ao site do Etec Noturno!</h2>' +
+    '<p class="geral-hero__lead">' +
+    escapeHtml(geralLead) +
+    "</p>" +
     '<img class="geral-hero__img" src="foto-etec.jpeg" alt="Etec Noturno" loading="lazy" decoding="async" />' +
     "</div>";
   if (intro) {
@@ -133,10 +138,6 @@ function renderGeral(c) {
   if (hasAgenda) {
     html += '<h3 class="site-block__heading">Agenda</h3>';
     html += agendaBlock(c.agenda);
-  }
-  if (!intro && !hasAgenda) {
-    html +=
-      '<p class="geral-hero__hint">Informações gerais da escola aparecerão aqui em breve.</p>';
   }
   root.innerHTML = html;
 }
