@@ -12,6 +12,53 @@ const TAB_LABELS = {
   gebe: "Gebe",
 };
 
+/** Cores do quadrado na grade (aba Calendário + Eventos) */
+const CALENDAR_TONE_KEYS = ["green", "yellow", "orange", "pink", "red"];
+const CALENDAR_TONE_LABELS = {
+  green: "Verde",
+  yellow: "Amarelo",
+  orange: "Laranja",
+  pink: "Rosa",
+  red: "Vermelho",
+};
+
+function normalizeCalendarTone(t) {
+  const s = String(t || "")
+    .trim()
+    .toLowerCase();
+  return CALENDAR_TONE_KEYS.includes(s) ? s : "green";
+}
+
+function sortTabs(tabs) {
+  const set = new Set(Array.isArray(tabs) ? tabs : []);
+  return TAB_KEYS.filter((k) => set.has(k));
+}
+
+function calendarJumpIsoFromItem(item) {
+  const r = parseItemDateRange(item);
+  if (!r) return "";
+  const d = r.start;
+  return isoFromYmd(d.getFullYear(), d.getMonth() + 1, d.getDate());
+}
+
+function mergeCalendarItemsDedup(cal, eventos, interclasseItems) {
+  const seen = new Set();
+  const out = [];
+  for (const list of [cal, eventos, interclasseItems]) {
+    if (!Array.isArray(list)) continue;
+    for (const it of list) {
+      if (!it) continue;
+      const id = it.id;
+      if (id) {
+        if (seen.has(id)) continue;
+        seen.add(id);
+      }
+      out.push(it);
+    }
+  }
+  return out;
+}
+
 function defaultContent() {
   return {
     v: 1,
@@ -299,8 +346,10 @@ function initCalendarView(root, items) {
     return items.filter((it) => itemCoversLocalDay(it, y, m0, d));
   }
 
-  function dayHasEvent(y, m0, d) {
-    return items.some((it) => itemCoversLocalDay(it, y, m0, d));
+  function dayToneForCell(y, m0, d) {
+    const list = itemsForDay(y, m0, d);
+    if (list.length === 0) return null;
+    return normalizeCalendarTone(list[0].calendarTone);
   }
 
   function paint() {
@@ -340,7 +389,11 @@ function initCalendarView(root, items) {
       btn.type = "button";
       btn.className = "calendar-day";
       if (cell.muted) btn.classList.add("calendar-day--muted");
-      if (dayHasEvent(cell.y, cell.m, cell.d)) btn.classList.add("calendar-day--has-events");
+      const tone = dayToneForCell(cell.y, cell.m, cell.d);
+      if (tone) {
+        btn.classList.add("calendar-day--has-events");
+        btn.classList.add(`calendar-day--tone-${tone}`);
+      }
       if (selY === cell.y && selM === cell.m && selD === cell.d) btn.classList.add("calendar-day--selected");
       if (isToday(cell.y, cell.m, cell.d)) btn.classList.add("calendar-day--today");
       const num = document.createElement("span");
@@ -421,18 +474,47 @@ function initCalendarView(root, items) {
   }
 
   paint();
+
+  root._fsCalendarJump = function (iso) {
+    if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(String(iso).trim())) return;
+    const [y, m, d] = String(iso).trim().split("-").map(Number);
+    selY = y;
+    selM = m - 1;
+    selD = d;
+    viewY = selY;
+    viewM = selM;
+    paint();
+  };
 }
 
-function agendaBlock(items) {
+/**
+ * @param {object} [opts]
+ * @param {Set<string>} [opts.calendarLinkIds] — ids que também estão no calendário (link opcional)
+ * @param {boolean} [opts.linkInterclasseDates] — na aba Interclasse: data clicável → calendário
+ */
+function agendaBlock(items, opts) {
+  const o = opts || {};
+  const calendarLinkIds = o.calendarLinkIds || null;
+  const linkInterclasseDates = o.linkInterclasseDates === true;
   return (
     '<div class="agenda">' +
     items
-      .map(
-        (item) =>
+      .map((item) => {
+        const dateLabel = escapeHtml(item.date || "—");
+        const isoJump = calendarJumpIsoFromItem(item);
+        const useLink =
+          isoJump &&
+          (linkInterclasseDates || (calendarLinkIds && item.id && calendarLinkIds.has(item.id)));
+        const dateCell = useLink
+          ? '<a href="#panel-calendario" class="agenda__date agenda__date--cal-link" data-cal-jump="' +
+            escapeHtml(isoJump) +
+            '" title="Ver no calendário">' +
+            dateLabel +
+            "</a>"
+          : '<div class="agenda__date">' + dateLabel + "</div>";
+        return (
           '<article class="agenda__item">' +
-          '<div class="agenda__date">' +
-          escapeHtml(item.date || "—") +
-          "</div>" +
+          dateCell +
           '<div class="agenda__meta">' +
           '<div class="agenda__title">' +
           escapeHtml(item.title) +
@@ -440,7 +522,8 @@ function agendaBlock(items) {
           (item.desc ? '<div class="agenda__desc">' + escapeHtml(item.desc).replace(/\n/g, "<br>") + "</div>" : "") +
           "</div>" +
           "</article>"
-      )
+        );
+      })
       .join("") +
     "</div>"
   );
@@ -491,7 +574,8 @@ function renderCalendario(c) {
   if (!root) return;
   const cal = Array.isArray(c.calendario) ? c.calendario : [];
   const ev = Array.isArray(c.eventos) ? c.eventos : [];
-  const items = [...cal, ...ev];
+  const ic = Array.isArray(c.interclasseItems) ? c.interclasseItems : [];
+  const items = mergeCalendarItemsDedup(cal, ev, ic);
   const withDates = items.filter((it) => parseItemDateRange(it));
 
   let extra = "";
@@ -538,7 +622,7 @@ function renderInterclassePanel(c) {
     return;
   }
   let html = "";
-  if (items.length > 0) html += agendaBlock(items);
+  if (items.length > 0) html += agendaBlock(items, { linkInterclasseDates: true });
   if (text) {
     html +=
       (items.length ? '<div class="site-block__spacer"></div>' : "") +
@@ -575,23 +659,44 @@ function buildRow(item) {
   wrap.className = "admin-row";
   wrap.dataset.id = item.id || uid();
 
-  const tabSel = document.createElement("label");
-  tabSel.className = "admin-field admin-field--target";
-  const tabLabel = document.createElement("span");
-  tabLabel.className = "admin-field__label";
-  tabLabel.textContent = "Mostrar na aba";
-  const sel = document.createElement("select");
-  sel.className = "admin-item-target";
-  sel.setAttribute("aria-label", "Mostrar na aba");
+  const tabsWrap = document.createElement("div");
+  tabsWrap.className = "admin-field admin-field--tabs";
+  const tabsLabel = document.createElement("span");
+  tabsLabel.className = "admin-field__label";
+  tabsLabel.textContent = "Mostrar nas abas";
+  const tabsHint = document.createElement("span");
+  tabsHint.className = "admin-field__sublabel";
+  tabsHint.textContent =
+    "Marque uma ou mais. O mesmo evento pode aparecer em Calendário e Interclasse, por exemplo.";
+  const tabsGrid = document.createElement("div");
+  tabsGrid.className = "admin-tab-checks";
+  const initialTabs = sortTabs(
+    Array.isArray(item.tabs) && item.tabs.length
+      ? item.tabs
+      : item.tab && TAB_KEYS.includes(item.tab)
+        ? [item.tab]
+        : ["agenda"]
+  );
   TAB_KEYS.forEach((key) => {
-    const opt = document.createElement("option");
-    opt.value = key;
-    opt.textContent = TAB_LABELS[key];
-    sel.appendChild(opt);
+    const lab = document.createElement("label");
+    lab.className = "admin-tab-check-label";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.value = key;
+    cb.className = "admin-tab-check";
+    cb.checked = initialTabs.includes(key);
+    cb.setAttribute("aria-label", TAB_LABELS[key]);
+    lab.appendChild(cb);
+    lab.appendChild(document.createTextNode(" " + TAB_LABELS[key]));
+    tabsGrid.appendChild(lab);
   });
-  sel.value = TAB_KEYS.includes(item.tab) ? item.tab : "agenda";
-  tabSel.appendChild(tabLabel);
-  tabSel.appendChild(sel);
+  tabsWrap.appendChild(tabsLabel);
+  tabsWrap.appendChild(tabsHint);
+  tabsWrap.appendChild(tabsGrid);
+
+  function getCheckedTabs() {
+    return sortTabs(Array.from(tabsGrid.querySelectorAll(".admin-tab-check:checked")).map((cb) => cb.value));
+  }
 
   const d = document.createElement("label");
   d.className = "admin-field admin-field--inline";
@@ -621,27 +726,76 @@ function buildRow(item) {
   diCal.style.display = "none";
 
   function applyTabDateInputs() {
-    const isCal = sel.value === "calendario";
-    if (!isCal && diCal.value) {
+    const tabs = getCheckedTabs();
+    const showCal = tabs.includes("calendario") || tabs.includes("eventos");
+    if (!showCal && diCal.value) {
       const p = diCal.value.split("-").map(Number);
       if (p.length === 3) di.value = `${pad2(p[2])}/${pad2(p[1])}/${p[0]}`;
     }
     di.style.display = "";
-    diCal.style.display = isCal ? "" : "none";
-    if (isCal) {
+    diCal.style.display = showCal ? "" : "none";
+    if (showCal) {
       di.placeholder = "Um dia (15/04/2026) ou período: de 29/06 até 03/07";
       dHint.textContent =
-        "Seletor = um dia. Para vários dias, digite no texto (ex.: de 29/06 até 03/07) — todos ficam verdes na grade.";
+        "Seletor = um dia. Período no texto (ex.: de 29/06 até 03/07) marca todos os dias na cor escolhida abaixo.";
     } else {
       di.placeholder = "ex.: 15/04 ou de 20/03 até 03/07";
       dHint.textContent = "Dia único ou período (ex.: de 20/03 até 03/07)";
     }
-    if (isCal && !diCal.value && di.value.trim()) {
+    if (showCal && !diCal.value && di.value.trim()) {
       const parsed = tryTextDateToIso(di.value);
       if (parsed) diCal.value = parsed;
     }
   }
-  sel.addEventListener("change", applyTabDateInputs);
+  const toneWrap = document.createElement("div");
+  toneWrap.className = "admin-field admin-cal-tone";
+  const toneLabel = document.createElement("span");
+  toneLabel.className = "admin-field__label";
+  toneLabel.textContent = "Cor no calendário";
+  const toneHint = document.createElement("span");
+  toneHint.className = "admin-field__sublabel";
+  toneHint.textContent = "Fundo do quadrado na grade (abas Eventos e Calendário).";
+  const toneBtns = document.createElement("div");
+  toneBtns.className = "admin-tone-btns";
+  const hiddenTone = document.createElement("input");
+  hiddenTone.type = "hidden";
+  hiddenTone.dataset.field = "calendarTone";
+  const startTone = normalizeCalendarTone(item.calendarTone);
+  hiddenTone.value = startTone;
+  CALENDAR_TONE_KEYS.forEach((key) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "admin-tone-btn admin-tone-btn--" + key;
+    b.dataset.tone = key;
+    b.textContent = CALENDAR_TONE_LABELS[key];
+    b.setAttribute("aria-pressed", key === startTone ? "true" : "false");
+    b.setAttribute("aria-label", "Cor no calendário: " + CALENDAR_TONE_LABELS[key]);
+    b.addEventListener("click", () => {
+      hiddenTone.value = key;
+      toneBtns.querySelectorAll(".admin-tone-btn").forEach((btn) => {
+        btn.setAttribute("aria-pressed", btn.dataset.tone === key ? "true" : "false");
+      });
+    });
+    toneBtns.appendChild(b);
+  });
+  toneWrap.appendChild(toneLabel);
+  toneWrap.appendChild(toneHint);
+  toneWrap.appendChild(toneBtns);
+  toneWrap.appendChild(hiddenTone);
+
+  function applyToneVisibility() {
+    const tabs = getCheckedTabs();
+    const show = tabs.includes("calendario") || tabs.includes("eventos");
+    toneWrap.style.display = show ? "" : "none";
+  }
+
+  function onTabsChange() {
+    applyTabDateInputs();
+    applyToneVisibility();
+  }
+  tabsGrid.querySelectorAll(".admin-tab-check").forEach((cb) => {
+    cb.addEventListener("change", onTabsChange);
+  });
 
   d.appendChild(dLab);
   d.appendChild(dHint);
@@ -674,10 +828,12 @@ function buildRow(item) {
 
   rm.addEventListener("click", () => wrap.remove());
 
-  wrap.appendChild(tabSel);
+  wrap.appendChild(tabsWrap);
   wrap.appendChild(d);
   wrap.appendChild(t);
   wrap.appendChild(desc);
+  wrap.appendChild(toneWrap);
+  applyToneVisibility();
   wrap.appendChild(rm);
   return wrap;
 }
@@ -688,22 +844,45 @@ function mountList(containerId, items) {
   el.replaceChildren();
   const list = Array.isArray(items) ? items : [];
   if (list.length === 0) {
-    el.appendChild(buildRow({ id: uid(), tab: "agenda", date: "", title: "", desc: "" }));
+    el.appendChild(
+      buildRow({ id: uid(), tabs: ["agenda"], date: "", title: "", desc: "", calendarTone: "green" })
+    );
   } else {
     list.forEach((item) =>
-      el.appendChild(buildRow({ ...item, id: item.id || uid(), tab: item.tab || "agenda" }))
+      el.appendChild(buildRow({ ...item, id: item.id || uid(), tabs: item.tabs || (item.tab ? [item.tab] : ["agenda"]) }))
     );
   }
 }
 
 function mergedItemsForMount(c) {
-  const agenda = (c.agenda || []).map((i) => ({ ...i, tab: "agenda" }));
-  const eventos = (c.eventos || []).map((i) => ({ ...i, tab: "eventos" }));
-  const calendario = (c.calendario || []).map((i) => ({ ...i, tab: "calendario" }));
-  const trotes = (c.trotesItems || []).map((i) => ({ ...i, tab: "trotes" }));
-  const interclasse = (c.interclasseItems || []).map((i) => ({ ...i, tab: "interclasse" }));
-  const gebe = (c.gebeItems || []).map((i) => ({ ...i, tab: "gebe" }));
-  return [...agenda, ...eventos, ...calendario, ...trotes, ...interclasse, ...gebe];
+  const map = new Map();
+  function add(arr, tab) {
+    if (!Array.isArray(arr)) return;
+    arr.forEach((i) => {
+      if (!i.id) {
+        const nid = uid();
+        map.set(nid, { ...i, id: nid, tabs: [tab] });
+        return;
+      }
+      const id = i.id;
+      if (!map.has(id)) {
+        map.set(id, { ...i, id, tabs: [tab] });
+      } else {
+        const ex = map.get(id);
+        if (!ex.tabs.includes(tab)) ex.tabs.push(tab);
+      }
+    });
+  }
+  add(c.agenda, "agenda");
+  add(c.eventos, "eventos");
+  add(c.calendario, "calendario");
+  add(c.trotesItems, "trotes");
+  add(c.interclasseItems, "interclasse");
+  add(c.gebeItems, "gebe");
+  return Array.from(map.values()).map((row) => {
+    row.tabs = sortTabs(row.tabs);
+    return row;
+  });
 }
 
 function collectItemsSplit() {
@@ -718,33 +897,43 @@ function collectItemsSplit() {
   const interclasseItems = [];
   const gebeItems = [];
   Array.from(el.querySelectorAll(".admin-row")).forEach((row) => {
-    const target = row.querySelector("select.admin-item-target") || row.querySelector("select");
-    const raw = target && target.value ? String(target.value).trim().toLowerCase() : "agenda";
+    const tabs = sortTabs(
+      Array.from(row.querySelectorAll(".admin-tab-check:checked")).map((cb) => cb.value)
+    );
+    if (tabs.length === 0) return;
     const date = row.querySelector('[data-field="date"]');
     const dateCal = row.querySelector(".admin-item-date-cal");
+    const toneIn = row.querySelector('[data-field="calendarTone"]');
     const title = row.querySelector('[data-field="title"]');
     const desc = row.querySelector('[data-field="desc"]');
+    const showCal = tabs.includes("calendario") || tabs.includes("eventos");
     let dateStr = "";
-    if (raw === "calendario") {
+    if (showCal) {
       const text = date ? date.value.trim() : "";
       const iso = dateCal && dateCal.value ? dateCal.value.trim() : "";
       dateStr = text || iso;
     } else {
       dateStr = date ? date.value.trim() : "";
     }
-    const item = {
+    const base = {
       id: row.dataset.id || uid(),
       date: dateStr,
       title: title ? title.value.trim() : "",
       desc: desc ? desc.value.trim() : "",
     };
-    if (!item.title && !item.date && !item.desc) return;
-    if (raw === "eventos") eventos.push(item);
-    else if (raw === "calendario") calendario.push(item);
-    else if (raw === "trotes") trotesItems.push(item);
-    else if (raw === "interclasse") interclasseItems.push(item);
-    else if (raw === "gebe") gebeItems.push(item);
-    else agenda.push(item);
+    if (tabs.includes("eventos") || tabs.includes("calendario")) {
+      base.calendarTone = normalizeCalendarTone(toneIn ? toneIn.value : "green");
+    }
+    if (!base.title && !base.date && !base.desc) return;
+    tabs.forEach((tab) => {
+      const item = { ...base };
+      if (tab === "eventos") eventos.push(item);
+      else if (tab === "calendario") calendario.push(item);
+      else if (tab === "trotes") trotesItems.push(item);
+      else if (tab === "interclasse") interclasseItems.push(item);
+      else if (tab === "gebe") gebeItems.push(item);
+      else agenda.push(item);
+    });
   });
   return { agenda, eventos, calendario, trotesItems, interclasseItems, gebeItems };
 }
@@ -789,7 +978,9 @@ async function initAdminDashboard() {
   const addItems = document.getElementById("admin-items-add");
   if (addItems) {
     addItems.onclick = () => {
-      document.getElementById("admin-items-list")?.appendChild(buildRow({ id: uid(), tab: "agenda", date: "", title: "", desc: "" }));
+      document
+        .getElementById("admin-items-list")
+        ?.appendChild(buildRow({ id: uid(), tabs: ["agenda"], date: "", title: "", desc: "", calendarTone: "green" }));
     };
   }
 
@@ -815,6 +1006,24 @@ async function initAdminDashboard() {
     });
   }
 }
+
+function setupCalendarJumpLinks() {
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a[data-cal-jump]");
+    if (!a) return;
+    const iso = a.getAttribute("data-cal-jump");
+    if (!iso) return;
+    e.preventDefault();
+    const tabBtn = document.querySelector('.tabs__btn[data-tab="calendario"]');
+    if (tabBtn) tabBtn.click();
+    window.setTimeout(() => {
+      const root = document.getElementById("site-calendario");
+      if (root && typeof root._fsCalendarJump === "function") root._fsCalendarJump(iso);
+    }, 90);
+  });
+}
+
+setupCalendarJumpLinks();
 
 async function boot() {
   try {
