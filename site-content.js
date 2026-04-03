@@ -488,23 +488,20 @@ function initCalendarView(root, items) {
 }
 
 /**
+ * Datas reconhecíveis viram link para a aba Calendário (salto para o dia).
  * @param {object} [opts]
- * @param {Set<string>} [opts.calendarLinkIds] — ids que também estão no calendário (link opcional)
- * @param {boolean} [opts.linkInterclasseDates] — na aba Interclasse: data clicável → calendário
+ * @param {boolean} [opts.linkCalendarDates] — default true; use false para desativar links
  */
 function agendaBlock(items, opts) {
   const o = opts || {};
-  const calendarLinkIds = o.calendarLinkIds || null;
-  const linkInterclasseDates = o.linkInterclasseDates === true;
+  const linkCalendarDates = o.linkCalendarDates !== false;
   return (
     '<div class="agenda">' +
     items
       .map((item) => {
         const dateLabel = escapeHtml(item.date || "—");
         const isoJump = calendarJumpIsoFromItem(item);
-        const useLink =
-          isoJump &&
-          (linkInterclasseDates || (calendarLinkIds && item.id && calendarLinkIds.has(item.id)));
+        const useLink = linkCalendarDates && !!isoJump;
         const dateCell = useLink
           ? '<a href="#panel-calendario" class="agenda__date agenda__date--cal-link" data-cal-jump="' +
             escapeHtml(isoJump) +
@@ -622,7 +619,7 @@ function renderInterclassePanel(c) {
     return;
   }
   let html = "";
-  if (items.length > 0) html += agendaBlock(items, { linkInterclasseDates: true });
+  if (items.length > 0) html += agendaBlock(items);
   if (text) {
     html +=
       (items.length ? '<div class="site-block__spacer"></div>' : "") +
