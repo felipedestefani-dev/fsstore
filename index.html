@@ -3,7 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="Etec Ferrucio Humberto Gazzetta — Noturno: eventos, calendário escolar, trotes, interclasse e informações do G.E.B.E."
+  />
+  <meta name="theme-color" content="#061018" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:title" content="Etec Ferrucio Humberto Gazzetta — Noturno" />
+  <meta
+    property="og:description"
+    content="Agenda, eventos, calendário, trotes, interclasse e G.E.B.E. da Etec Ferrucio Humberto Gazzetta."
+  />
+  <meta property="og:image" content="foto-etec.jpeg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Etec Ferrucio Humberto Gazzetta — Noturno" />
+  <meta
+    name="twitter:description"
+    content="Agenda, eventos, calendário e atividades da Etec Ferrucio Humberto Gazzetta — Noturno."
+  />
   <title>Etec Ferrucio Humberto Gazzetta</title>
+  <link rel="icon" href="etec-logo.png" type="image/png" />
+  <link rel="apple-touch-icon" href="etec-logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -17,6 +38,7 @@
   <script src="config.js"></script>
 </head>
 <body id="topo">
+  <a class="skip-link" href="#conteudo-principal">Ir para o conteúdo</a>
   <header class="topbar">
     <div class="topbar__inner">
       <div class="topbar__content">
@@ -52,7 +74,7 @@
     </div>
   </header>
 
-  <main class="main">
+  <main class="main" id="conteudo-principal" tabindex="-1">
     <section class="panel" id="panel-geral" aria-label="Geral">
       <div id="site-geral"></div>
     </section>
@@ -106,35 +128,10 @@
 
           <div class="admin-dashboard" id="admin-dashboard" aria-label="Ferramentas de edição">
             <div class="admin-tool">
-              <h3 class="admin-tool__title">Texto da aba Geral</h3>
-              <p class="admin-tool__desc">Aparece abaixo do título e da foto de boas-vindas, antes da agenda.</p>
-              <label class="admin-field">
-                <span class="admin-field__label">Introdução</span>
-                <textarea id="admin-geral-intro" rows="4" placeholder="Texto livre para avisos gerais…"></textarea>
-              </label>
-            </div>
-
-            <div class="admin-tool">
               <h3 class="admin-tool__title">Itens por aba</h3>
               <p class="admin-tool__desc">Em cada linha, marque <strong>uma ou mais abas</strong> (Geral, Eventos, Calendário, Trotes, Interclasse, Gebe). O mesmo evento pode ir para <strong>Calendário e Interclasse</strong> ao marcar as duas. Nas abas Eventos e Calendário, defina a <strong>cor na grade</strong>. Na aba Interclasse, a <strong>data</strong> vira link para abrir o <strong>Calendário</strong> naquele dia.</p>
               <div id="admin-items-list" class="admin-list"></div>
               <button type="button" class="btn btn--positive" id="admin-items-add">+ Adicionar item</button>
-            </div>
-
-            <div class="admin-tool">
-              <h3 class="admin-tool__title">Trotes</h3>
-              <label class="admin-field">
-                <span class="admin-field__label">Texto da aba Trotes</span>
-                <textarea id="admin-trotes" rows="5" placeholder="Conteúdo da aba Trotes…"></textarea>
-              </label>
-            </div>
-
-            <div class="admin-tool">
-              <h3 class="admin-tool__title">Interclasse</h3>
-              <label class="admin-field">
-                <span class="admin-field__label">Texto da aba Interclasse</span>
-                <textarea id="admin-interclasse" rows="5" placeholder="Notícias e jogos…"></textarea>
-              </label>
             </div>
 
             <p class="admin-save-row">
@@ -151,6 +148,13 @@
 
   <footer class="footer">
     <div class="footer__inner">
+      <div class="footer__institutional">
+        <p>
+          <strong>Etec Ferrucio Humberto Gazzetta</strong> — Período Noturno.
+          <a class="footer__link" href="https://etecdenovaodessa.cps.sp.gov.br/" target="_blank" rel="noopener noreferrer">Site oficial da escola</a>
+        </p>
+        <p class="footer__institutional-hint">Conteúdo de responsabilidade da equipe escolar; avisos oficiais também pela secretaria.</p>
+      </div>
       <p class="footer__text">
         <strong>Desenvolvedor do site:</strong> <strong>Felipe</strong> •
         <a class="footer__ig" href="https://instagram.com/off.destefani" target="_blank" rel="noopener noreferrer">

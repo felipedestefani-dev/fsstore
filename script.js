@@ -49,5 +49,19 @@
   });
 
   setActive('geral');
+
+  const skip = document.querySelector('.skip-link');
+  const mainEl = document.getElementById('conteudo-principal');
+  if (skip && mainEl) {
+    skip.addEventListener('click', () => {
+      window.requestAnimationFrame(() => {
+        try {
+          mainEl.focus({ preventScroll: true });
+        } catch {
+          mainEl.focus();
+        }
+      });
+    });
+  }
 })();
 

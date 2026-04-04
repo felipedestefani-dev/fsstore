@@ -74,6 +74,15 @@ function defaultContent() {
   };
 }
 
+/** Placeholder antigo (às vezes salvo na aba Interclasse); removido ao carregar. */
+function stripLegacyTrotesAnnouncementPhrase(raw) {
+  let t = String(raw ?? "").trim();
+  if (!t) return "";
+  if (/^Os trotes serão anunciados por aqui\.?$/i.test(t)) return "";
+  t = t.replace(/\s*Os trotes serão anunciados por aqui\.?\s*/gi, "").trim();
+  return t;
+}
+
 function normalizePayload(o) {
   if (!o || typeof o !== "object") return defaultContent();
   return {
@@ -85,6 +94,8 @@ function normalizePayload(o) {
     trotesItems: Array.isArray(o.trotesItems) ? o.trotesItems : [],
     interclasseItems: Array.isArray(o.interclasseItems) ? o.interclasseItems : [],
     gebeItems: Array.isArray(o.gebeItems) ? o.gebeItems : [],
+    trotes: stripLegacyTrotesAnnouncementPhrase(o.trotes),
+    interclasse: stripLegacyTrotesAnnouncementPhrase(o.interclasse),
   };
 }
 
@@ -940,9 +951,9 @@ async function collectForm() {
   const intro = document.getElementById("admin-geral-intro");
   const trotes = document.getElementById("admin-trotes");
   const inter = document.getElementById("admin-interclasse");
-  c.geralIntro = intro ? intro.value : "";
-  c.trotes = trotes ? trotes.value : "";
-  c.interclasse = inter ? inter.value : "";
+  if (intro) c.geralIntro = intro.value;
+  if (trotes) c.trotes = trotes.value;
+  if (inter) c.interclasse = inter.value;
   const split = collectItemsSplit();
   c.agenda = split.agenda;
   c.eventos = split.eventos;
@@ -968,9 +979,9 @@ async function initAdminDashboard() {
   const intro = document.getElementById("admin-geral-intro");
   const trotes = document.getElementById("admin-trotes");
   const inter = document.getElementById("admin-interclasse");
-  if (intro) intro.value = c.geralIntro;
-  if (trotes) trotes.value = c.trotes;
-  if (inter) inter.value = c.interclasse;
+  if (intro) intro.value = c.geralIntro || "";
+  if (trotes) trotes.value = c.trotes || "";
+  if (inter) inter.value = c.interclasse || "";
 
   const addItems = document.getElementById("admin-items-add");
   if (addItems) {

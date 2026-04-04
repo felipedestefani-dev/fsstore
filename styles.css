@@ -43,6 +43,29 @@
   color: rgba(255, 255, 255, 0.98);
 }
 
+.skip-link {
+  position: absolute;
+  top: -120px;
+  left: 1rem;
+  z-index: 10000;
+  padding: 0.65rem 1.1rem;
+  border-radius: 12px;
+  background: linear-gradient(155deg, #0f2847 0%, #020617 100%);
+  border: 1px solid rgba(125, 211, 252, 0.35);
+  color: rgba(255, 255, 255, 0.96);
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  transition: top 0.18s ease;
+}
+
+.skip-link:focus {
+  top: 1rem;
+  outline: 3px solid rgba(56, 189, 248, 0.75);
+  outline-offset: 2px;
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -1596,10 +1619,39 @@ a.agenda__date--cal-link:focus-visible {
   margin: 0 auto;
   padding: 1.5rem 1.25rem 1.65rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 1.15rem;
   text-align: center;
+}
+
+.footer__institutional {
+  max-width: 44rem;
+  margin: 0 auto;
+}
+.footer__institutional p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.footer__institutional-hint {
+  margin-top: 0.5rem !important;
+  font-size: 0.82rem !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+.footer__link {
+  color: rgba(125, 211, 252, 0.95);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.footer__link:hover {
+  color: rgba(224, 242, 254, 0.98);
 }
 
 .footer__text {
