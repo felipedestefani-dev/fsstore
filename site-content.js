@@ -543,7 +543,7 @@ function renderGeral(c) {
   const intro = c.geralIntro.trim();
   const hasAgenda = Array.isArray(c.agenda) && c.agenda.length > 0;
   const geralLead =
-    "Este site foi desenvolvido por alunos do período noturno da Etec Ferrucio Humberto Gazzetta, com a finalidade de divulgar informações institucionais e atividades escolares, tais como eventos, trotes, interclasses, entre outras iniciativas promovidas pela escola.";
+    "Este site foi desenvolvido por alunos do período da Etec Noturno, com a finalidade de divulgar informações institucionais e atividades escolares, tais como eventos, trotes, interclasses, entre outras iniciativas promovidas pela escola.";
   let html = "";
   html +=
     '<div class="geral-hero">' +
